@@ -72,7 +72,7 @@ class DocumentUploadRequest(StrictSchema):
         return parse_optional_json_dict(value)
 
 
-class HumanReviewSubmitRequest(StrictSchema):
+class FieldReviewRequest(StrictSchema):
     model_config = ConfigDict(
         strict=True,
         extra="forbid",
@@ -97,6 +97,21 @@ class HumanReviewSubmitRequest(StrictSchema):
     edited_value: str | None = None
     comments: str | None = None
     edit_reason: str | None = None
+    expected_version: int
+
+    @field_validator("action", mode="before")
+    @classmethod
+    def normalize_action(cls, value: Any) -> HumanReviewAction:
+        if isinstance(value, HumanReviewAction):
+            return value
+        return HumanReviewAction(str(value))
+
+    @field_validator("field_id", mode="before")
+    @classmethod
+    def normalize_field_id(cls, value: Any) -> UUID:
+        if isinstance(value, UUID):
+            return value
+        return UUID(str(value))
 
     @field_validator("edited_value", "comments", "edit_reason", mode="before")
     @classmethod
@@ -112,6 +127,9 @@ class HumanReviewSubmitRequest(StrictSchema):
         if action != HumanReviewAction.EDIT and value is not None:
             raise ValueError("edited_value is only allowed when action is EDIT")
         return value
+
+
+HumanReviewSubmitRequest = FieldReviewRequest
 
 
 class ActionPlanFinalizeRequest(StrictSchema):
@@ -142,6 +160,13 @@ class ActionPlanFinalizeRequest(StrictSchema):
     @classmethod
     def normalize_modifications(cls, value: Any) -> dict[str, Any] | None:
         return parse_optional_json_dict(value)
+
+    @field_validator("plan_item_id", mode="before")
+    @classmethod
+    def normalize_plan_item_id(cls, value: Any) -> UUID:
+        if isinstance(value, UUID):
+            return value
+        return UUID(str(value))
 
     @field_validator("modifications")
     @classmethod
@@ -194,6 +219,14 @@ class ActionPlanReviewRequest(StrictSchema):
     action: ActionPlanDecision
     modifications: dict[str, Any] | None = None
     rationale: str | None = None
+    expected_version: int
+
+    @field_validator("action", mode="before")
+    @classmethod
+    def normalize_action(cls, value: Any) -> ActionPlanDecision:
+        if isinstance(value, ActionPlanDecision):
+            return value
+        return ActionPlanDecision(str(value))
 
     @field_validator("modifications", mode="before")
     @classmethod

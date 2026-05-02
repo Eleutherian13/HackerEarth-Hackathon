@@ -115,6 +115,9 @@ class FakeSession:
     def commit(self) -> None:
         return None
 
+    def rollback(self) -> None:
+        return None
+
     def refresh(self, obj: Any) -> None:
         return None
 

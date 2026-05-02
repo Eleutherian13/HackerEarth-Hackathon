@@ -248,7 +248,6 @@ class UploadHandler:
             file_size_bytes=file_size_bytes,
             page_count=page_count,
             is_text_based=False,  # Will be determined after OCR
-            processing_status=ProcessingStatus.UPLOADED,
             uploaded_by_user_id=uploaded_by_user_id,
             metadata_json=metadata or {},
         )

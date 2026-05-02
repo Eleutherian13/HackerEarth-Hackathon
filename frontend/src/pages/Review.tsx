@@ -16,10 +16,12 @@ import {
   Stack,
   Divider,
   Paper,
+  Snackbar,
 } from '@mui/material';
 import { Refresh as RefreshIcon } from '@mui/icons-material';
 import { useDocumentStatus } from '../hooks/useDocumentStatus';
 import { useDocumentReview } from '../hooks/useDocumentReview';
+import { ReviewApiError, useVersionTracker } from '../hooks/useExtractionReview';
 
 const Review: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -33,6 +35,10 @@ const Review: React.FC = () => {
   const [editedValues, setEditedValues] = useState<Record<string, string>>({});
   const [commentValues, setCommentValues] = useState<Record<string, string>>({});
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const { versionById, changedIds, recentlyReviewedItems, markConflict, clearChanged } = useVersionTracker(
+    data?.extracted_fields ?? []
+  );
 
   const handleChange = (fieldId: string, value: string) => {
     setEditedValues((prev) => ({ ...prev, [fieldId]: value }));
@@ -52,6 +58,7 @@ const Review: React.FC = () => {
       field_id: fieldId,
       action,
       comments: commentValues[fieldId] || undefined,
+      expected_version: versionById[fieldId] ?? field.version ?? 1,
     };
 
     if (action === 'EDIT') {
@@ -64,8 +71,18 @@ const Review: React.FC = () => {
       setSuccessMessage(`Field ${action.toLowerCase()}ed successfully.`);
       setEditedValues((prev) => ({ ...prev, [fieldId]: '' }));
       setCommentValues((prev) => ({ ...prev, [fieldId]: '' }));
+      clearChanged(fieldId);
       await refetch();
     } catch (err) {
+      if (err instanceof ReviewApiError && err.status === 409) {
+        const reviewerName = err.payload?.details?.last_modified_by ?? 'another reviewer';
+        const currentVersion = err.payload?.current_version;
+        const lastModifiedAt = err.payload?.details?.last_modified_at ?? null;
+        markConflict(fieldId, reviewerName, lastModifiedAt ?? undefined, currentVersion);
+        setSuccessMessage(null);
+        setToastMessage(`This field was just modified by ${reviewerName}`);
+        await refetch();
+      }
       console.error(err);
     }
   };
@@ -122,6 +139,13 @@ const Review: React.FC = () => {
         </Box>
       )}
 
+      <Snackbar
+        open={Boolean(toastMessage)}
+        autoHideDuration={5000}
+        onClose={() => setToastMessage(null)}
+        message={toastMessage}
+      />
+
       <Grid container spacing={3}>
         <Grid item xs={12} lg={7}>
           <Paper variant="outlined" sx={{ p: 3, mb: 3 }}>
@@ -136,10 +160,34 @@ const Review: React.FC = () => {
             ) : (
               <Stack spacing={2}>
                 {reviewableFields.map((field: any) => (
-                  <Card key={field.id} variant="outlined">
+                  <Card
+                    key={field.id}
+                    variant="outlined"
+                    sx={{
+                      borderColor: changedIds[field.id] ? 'warning.main' : undefined,
+                      boxShadow: changedIds[field.id] ? '0 0 0 1px rgba(245,158,11,0.4)' : undefined,
+                    }}
+                  >
                     <CardHeader
                       title={field.field_type.replace(/_/g, ' ')}
-                      subheader={`Confidence ${(field.confidence_score * 100).toFixed(0)}% · ${field.verification_status}`}
+                      subheader={
+                        <Box>
+                          <Typography variant="body2" color="text.secondary">
+                            Confidence {(field.confidence_score * 100).toFixed(0)}% · {field.verification_status}
+                          </Typography>
+                          {recentlyReviewedItems[field.id] && (
+                            <Chip
+                              size="small"
+                              color="warning"
+                              label={`Recently reviewed by ${recentlyReviewedItems[field.id].reviewerName}`}
+                              sx={{ mt: 1 }}
+                            />
+                          )}
+                          {changedIds[field.id] && (
+                            <Chip size="small" color="info" label="Updated since load" sx={{ mt: 1, ml: 1 }} />
+                          )}
+                        </Box>
+                      }
                     />
                     <CardContent>
                       <Typography variant="body2" sx={{ mb: 2 }}>

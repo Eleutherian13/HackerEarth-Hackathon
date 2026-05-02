@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { ReviewApiError } from "./useExtractionReview";
 
 export type ActionPlanDecision = "APPROVE" | "MODIFY" | "REJECT";
 
@@ -6,6 +7,7 @@ export interface ActionPlanReviewRequest {
   action: ActionPlanDecision;
   modifications?: Record<string, string>;
   rationale?: string;
+  expected_version: number;
 }
 
 export interface ActionPlanEditRequest {
@@ -44,11 +46,18 @@ export const useActionPlanReview = (documentId?: string) => {
       );
 
       if (!response.ok) {
-        const text = await response.text();
+        const payload = await response.json().catch(() => null);
+        if (response.status === 409 && payload) {
+          const message = payload.message || "This field was just modified by another reviewer";
+          setError(message);
+          throw new ReviewApiError(message, response.status, payload);
+        }
+
+        const text = typeof payload === "string" ? payload : null;
         const message =
           text || response.statusText || "Action plan review failed";
         setError(message);
-        throw new Error(message);
+        throw new ReviewApiError(message, response.status);
       }
 
       const result = await response.json();
@@ -100,45 +109,6 @@ export const useActionPlanReview = (documentId?: string) => {
       setLoading(false);
     }
   };
-
-  const finalizePlan = async () => {
-    if (!documentId) {
-      setError("Document ID is required to finalize action plan");
-      throw new Error("Document ID is required to finalize action plan");
-    }
-
-    try {
-      setLoading(true);
-      setError(null);
-
-      const response = await fetch(
-        `/api/v1/documents/${documentId}/finalize-plan`,
-        {
-          method: "POST",
-        },
-      );
-
-      if (!response.ok) {
-        const text = await response.text();
-        const message =
-          text || response.statusText || "Action plan finalization failed";
-        setError(message);
-        throw new Error(message);
-      }
-
-      const result = await response.json();
-      return result;
-    } catch (err) {
-      const message =
-        err instanceof Error ? err.message : "Failed to finalize action plan";
-      setError(message);
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  return { submitReview, editActionItem };
 
   const finalizePlan = async () => {
     if (!documentId) {

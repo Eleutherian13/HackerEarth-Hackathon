@@ -17,6 +17,7 @@ export interface ActionPlanItem {
   source_evidence_links: Array<Record<string, unknown>>;
   source_evidence?: Record<string, unknown>;
   verification_status: string;
+  version: number;
   verified_by_user_id?: string | null;
   verification_date?: string | null;
   completion_status: string;

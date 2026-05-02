@@ -15,15 +15,19 @@ from typing import Any
 
 from fastapi import APIRouter, BackgroundTasks, Depends, File, Form, HTTPException, Request, status
 from sqlalchemy.orm import Session
+from sqlalchemy.orm.exc import StaleDataError
 
 from app.api.deps import get_current_active_user, get_db
+from app.core.validators import InputValidator
 from app.core.audit import log_document_upload
 from app.core.logging import get_logger
 from app.models.domain.models import Document, DocumentPage, ExtractedField, User
 from app.models.enums import ProcessingStatus, VerificationStatus
 from app.models.schemas.requests import DocumentUploadRequest, HumanReviewSubmitRequest, HumanReviewAction
 from app.models.schemas.responses import DocumentResponse, ExtractedFieldResponse
+from app.api.v1.endpoints.review import build_stale_review_response
 from app.services.ingestion.storage import get_storage_backend
+from app.services.verification import review_service
 from app.services.ingestion.upload_handler import (
     PDFAlreadyExistsError,
     PDFValidationError,
@@ -217,6 +221,19 @@ async def upload_document(
     - 500: Storage error
     """
     try:
+        # Validate file size first (before parsing)
+        file_size = len(file)
+        if not InputValidator.validate_file_size(file_size, max_mb=50):
+            logger.warning_context(
+                "Upload rejected: file size exceeds limit",
+                file_size=file_size,
+                max_size=50 * 1024 * 1024,
+            )
+            raise HTTPException(
+                status_code=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE,
+                detail=f"File size {file_size} bytes exceeds maximum of 50MB",
+            )
+        
         # Parse metadata
         try:
             import json
@@ -266,6 +283,17 @@ async def upload_document(
             filename = file.filename
         elif request.headers.get("x-filename"):
             filename = request.headers.get("x-filename")
+        
+        # Validate filename (prevent path traversal, check length)
+        if not InputValidator.validate_filename(filename, max_length=500):
+            logger.warning_context(
+                "Upload rejected: invalid filename",
+                filename=filename,
+            )
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Invalid filename. Filename must not contain path traversal sequences (.., /, \\) and must be < 500 characters",
+            )
 
         storage_path = f"documents/{document_id}/{filename}"
 
@@ -503,6 +531,7 @@ async def get_document_status(
                 "confidence_score": float(field.confidence_score),
                 "extraction_method": field.extraction_method.value,
                 "verification_status": field.verification_status.value,
+                "version": field.version,
                 "is_inferred": field.is_inferred,
                 "inference_rationale": field.inference_rationale,
                 "source_page_ids": field.source_page_ids,
@@ -522,6 +551,7 @@ async def get_document_status(
                 "due_date": item.due_date.isoformat() if item.due_date else None,
                 "completion_status": item.completion_status.value,
                 "verification_status": item.verification_status.value,
+                "version": item.version,
                 "description": item.description,
             }
             for item in action_items
@@ -560,6 +590,33 @@ async def review_extracted_field(
         field_uuid = uuid.UUID(field_id)
     except ValueError:
         raise HTTPException(status_code=400, detail="Invalid field ID format")
+    
+    # Validate review request inputs
+    if review_request.expected_version is not None and review_request.expected_version < 1:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail="expected_version must be a positive integer",
+        )
+    
+    # Validate comments don't contain XSS
+    if review_request.comments:
+        if not InputValidator.validate_no_html_script(review_request.comments):
+            logger.warning_context(
+                "Review submission blocked: XSS detected in comments",
+                field_id=str(field_uuid),
+                user_id=str(current_user.id),
+            )
+            raise HTTPException(
+                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                detail="Comments contain invalid HTML or script content",
+            )
+        
+        # Validate comments length
+        if not InputValidator.validate_text_length(review_request.comments, max_length=2000):
+            raise HTTPException(
+                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                detail="Comments must not exceed 2000 characters",
+            )
 
     document = db.query(Document).filter(Document.id == doc_uuid).first()
     if not document:
@@ -573,38 +630,42 @@ async def review_extracted_field(
     if not field:
         raise HTTPException(status_code=404, detail="Extracted field not found")
 
-    previous_value = field.value
-    if review_request.action == HumanReviewAction.APPROVE:
-        field.verification_status = VerificationStatus.APPROVED
-    elif review_request.action == HumanReviewAction.EDIT:
-        field.value = review_request.edited_value or field.value
-        field.normalized_value = review_request.edited_value or field.normalized_value
-        field.verification_status = VerificationStatus.EDITED
-        field.edit_history = field.edit_history or []
-        field.edit_history.append(
-            {
-                "edited_at": datetime.utcnow().isoformat(),
-                "edited_by": str(current_user.id),
-                "previous_value": previous_value,
-                "edited_value": review_request.edited_value,
-                "edit_reason": review_request.edit_reason,
-            }
+    try:
+        field = review_service.review_field(
+            db=db,
+            field_id=field.id,
+            action=review_request.action,
+            edited_value=review_request.edited_value,
+            comments=review_request.comments,
+            expected_version=review_request.expected_version,
+            reviewer_id=current_user.id,
+            edit_reason=review_request.edit_reason,
         )
-    elif review_request.action == HumanReviewAction.REJECT:
-        field.verification_status = VerificationStatus.REJECTED
-    else:
-        raise HTTPException(status_code=400, detail="Invalid review action")
+    except StaleDataError as exc:
+        db.rollback()
+        latest = db.query(ExtractedField).filter(ExtractedField.id == field.id).first()
+        last_modified_by = None
+        last_modified_at = None
+        current_version = latest.version if latest else field.version
+        if latest and latest.verified_by_user:
+            last_modified_by = latest.verified_by_user.full_name
+            last_modified_at = latest.verified_at.isoformat() if latest.verified_at else None
+        return build_stale_review_response(
+            current_version=current_version,
+            last_modified_by=last_modified_by,
+            last_modified_at=last_modified_at,
+        )
 
-    field.reviewer_comments = review_request.comments
-    field.verified_by_user_id = current_user.id
-    field.verified_at = datetime.utcnow()
-
-    document.processing_status = ProcessingStatus.UNDER_REVIEW
     all_fields = db.query(ExtractedField).filter(ExtractedField.document_id == doc_uuid).all()
-    if all(f.verification_status in {VerificationStatus.APPROVED, VerificationStatus.EDITED} for f in all_fields):
-        document.processing_status = ProcessingStatus.VERIFIED
+    if all(f.verification_status in {VerificationStatus.APPROVED, VerificationStatus.EDITED, VerificationStatus.REJECTED} for f in all_fields):
+        if document.processing_status == ProcessingStatus.PENDING_REVIEW:
+            document.transition_to(ProcessingStatus.UNDER_REVIEW, current_user.id, reason="Field review completed")
+        if document.processing_status == ProcessingStatus.UNDER_REVIEW:
+            document.transition_to(ProcessingStatus.VERIFIED, current_user.id, reason="All fields reviewed")
+    else:
+        if document.processing_status == ProcessingStatus.PENDING_REVIEW:
+            document.transition_to(ProcessingStatus.UNDER_REVIEW, current_user.id, reason="Field review in progress")
 
-    document.updated_at = datetime.utcnow()
     db.commit()
 
     return ExtractedFieldResponse.model_validate(field)
@@ -633,9 +694,8 @@ async def retry_document_processing(
     if document.processing_status != ProcessingStatus.FAILED:
         raise HTTPException(status_code=400, detail="Only failed documents can be retried")
 
-    document.processing_status = ProcessingStatus.CLASSIFYING
+    document.transition_to(ProcessingStatus.CLASSIFYING, current_user.id, reason="Retry requested")
     document.error_message = None
-    document.updated_at = datetime.utcnow()
     db.commit()
 
     try:
@@ -643,9 +703,8 @@ async def retry_document_processing(
 
         process_document.delay(str(document.id))
     except Exception:
-        document.processing_status = ProcessingStatus.FAILED
+        document.transition_to(ProcessingStatus.FAILED, current_user.id, reason="Failed to enqueue retry")
         document.error_message = "Failed to enqueue retry"
-        document.updated_at = datetime.utcnow()
         db.commit()
         raise HTTPException(status_code=500, detail="Failed to queue retry")
 

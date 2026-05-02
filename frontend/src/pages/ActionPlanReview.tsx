@@ -8,6 +8,7 @@ import {
   CircularProgress,
   Alert,
   Grid,
+  Snackbar,
 } from "@mui/material";
 import { Refresh as RefreshIcon } from "@mui/icons-material";
 import { useActionPlan } from "../hooks/useActionPlan";
@@ -16,6 +17,7 @@ import SummaryCards from "../components/ActionReview/SummaryCards";
 import ActionItemsTable from "../components/ActionReview/ActionItemsTable";
 import ActionItemDetail from "../components/ActionReview/ActionItemDetail";
 import { ActionPlanItem } from "../hooks/useActionPlan";
+import { ReviewApiError, useVersionTracker } from "../hooks/useExtractionReview";
 
 const ActionPlanReview: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -37,6 +39,8 @@ const ActionPlanReview: React.FC = () => {
   >({});
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [finalizeMessage, setFinalizeMessage] = useState<string | null>(null);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const { versionById, changedIds, clearChanged, markConflict } = useVersionTracker(data ?? []);
 
   useEffect(() => {
     if (!selectedItemId && data && data.length > 0) {
@@ -71,7 +75,10 @@ const ActionPlanReview: React.FC = () => {
     action: "APPROVE" | "REJECT",
   ) => {
     try {
-      const requestPayload: any = { action };
+      const requestPayload: any = {
+        action,
+        expected_version: versionById[itemId] ?? selectedItem?.version ?? 1,
+      };
       if (action === "REJECT") {
         requestPayload.rationale =
           rationaleValues[itemId] || "Rejected after review.";
@@ -79,8 +86,22 @@ const ActionPlanReview: React.FC = () => {
       await submitReview(itemId, requestPayload);
       setSuccessMessage(`Action item ${action.toLowerCase()}d successfully.`);
       setFinalizeMessage(null);
+      clearChanged(itemId);
       await refetch();
     } catch (err) {
+      if (err instanceof ReviewApiError && err.status === 409) {
+        const reviewerName = err.payload?.details?.last_modified_by ?? "another reviewer";
+        markConflict(
+          itemId,
+          reviewerName,
+          err.payload?.details?.last_modified_at,
+          err.payload?.current_version,
+        );
+        setSuccessMessage(null);
+        setFinalizeMessage(null);
+        setToastMessage(`This field was just modified by ${reviewerName}`);
+        await refetch();
+      }
       console.error(err);
     }
   };
@@ -190,6 +211,13 @@ const ActionPlanReview: React.FC = () => {
         </Box>
       )}
 
+      <Snackbar
+        open={Boolean(toastMessage)}
+        autoHideDuration={5000}
+        onClose={() => setToastMessage(null)}
+        message={toastMessage}
+      />
+
       {data && data.length > 0 ? (
         <>
           <SummaryCards items={data} />
@@ -203,20 +231,27 @@ const ActionPlanReview: React.FC = () => {
             </Grid>
             <Grid item xs={12} lg={5}>
               {selectedItem ? (
-                <ActionItemDetail
-                  item={selectedItem}
-                  modifications={modifications[selectedItem.id] || {}}
-                  rationale={rationaleValues[selectedItem.id] || ""}
-                  onFieldChange={(fieldKey, value) =>
-                    handleFieldChange(selectedItem.id, fieldKey, value)
-                  }
-                  onReviewAction={handleReviewAction}
-                  onSaveChanges={handleSaveChanges}
-                  onRationaleChange={(value) =>
-                    handleRationaleChange(selectedItem.id, value)
-                  }
-                  loading={reviewLoading}
-                />
+                <>
+                  {changedIds[selectedItem.id] && (
+                    <Alert severity="info" sx={{ mb: 2 }}>
+                      This item was updated since you loaded it. Review the latest values before resubmitting.
+                    </Alert>
+                  )}
+                  <ActionItemDetail
+                    item={selectedItem}
+                    modifications={modifications[selectedItem.id] || {}}
+                    rationale={rationaleValues[selectedItem.id] || ""}
+                    onFieldChange={(fieldKey, value) =>
+                      handleFieldChange(selectedItem.id, fieldKey, value)
+                    }
+                    onReviewAction={handleReviewAction}
+                    onSaveChanges={handleSaveChanges}
+                    onRationaleChange={(value) =>
+                      handleRationaleChange(selectedItem.id, value)
+                    }
+                    loading={reviewLoading}
+                  />
+                </>
               ) : (
                 <Alert severity="info">
                   Select an action item to review its details.

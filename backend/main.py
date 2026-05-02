@@ -20,6 +20,7 @@ from fastapi.responses import JSONResponse
 from app.api.middleware.auth import configure_security
 from app.api.middleware.audit_middleware import configure_audit_middleware
 from app.api.middleware.logging import configure_request_logging
+from app.api.middleware.size_limit import RequestSizeLimitMiddleware, ContentTypeValidationMiddleware
 from app.api.v1.endpoints import auth, health
 from app.api.v1.endpoints.action_plan import router as action_plan_router
 from app.api.v1.endpoints.cases import router as cases_router
@@ -68,6 +69,10 @@ def create_app() -> FastAPI:
     configure_request_logging(app)
     configure_security(app)
     configure_audit_middleware(app)
+    
+    # Add input validation middleware
+    app.add_middleware(ContentTypeValidationMiddleware)
+    app.add_middleware(RequestSizeLimitMiddleware)
 
     # Exception handlers
     @app.exception_handler(RequestValidationError)

@@ -12,6 +12,7 @@ from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
+from sqlalchemy.orm.exc import StaleDataError
 
 from app.api.deps import get_current_active_user, get_db
 from app.core.audit import log_action_plan_generated, log_action_plan_verified
@@ -23,7 +24,9 @@ from app.models.schemas.requests import (
     ActionPlanReviewRequest,
 )
 from app.models.schemas.responses import ActionPlanItemResponse
+from app.api.v1.endpoints.review import build_stale_review_response
 from app.services.action_plan import generate_action_plan_items, finalize_action_plan_review
+from app.services.verification import review_service
 
 router = APIRouter(tags=["action-plan"])
 
@@ -69,6 +72,7 @@ def _build_action_plan_item_response(item: ActionPlanItem) -> dict[str, Any]:
         "source_evidence_links": item.source_evidence.get("links", []),
         "source_evidence": item.source_evidence,
         "verification_status": item.verification_status.value,
+        "version": item.version,
         "verified_by_user_id": str(item.verified_by_user_id) if item.verified_by_user_id else None,
         "verification_date": item.verification_date.isoformat() if item.verification_date else None,
         "completion_status": item.completion_status.value,
@@ -112,7 +116,7 @@ async def get_action_plan(
         except Exception as exc:
             raise HTTPException(status_code=500, detail=str(exc))
 
-    return [_build_action_plan_item_response(item) for item in action_items]
+    return [ActionPlanItemResponse.model_validate(_build_action_plan_item_response(item), strict=False) for item in action_items]
 
 
 @router.post(
@@ -154,41 +158,32 @@ async def review_action_plan_item(
         if plan_item.document_id != doc_uuid:
             raise HTTPException(status_code=404, detail="Action plan item not found for the document")
 
-    if review_request.action == ActionPlanDecision.APPROVE:
-        plan_item.verification_status = VerificationStatus.APPROVED
-    elif review_request.action == ActionPlanDecision.MODIFY:
-        modifications = review_request.modifications or {}
-        if "title" in modifications:
-            plan_item.title = modifications["title"]
-        if "description" in modifications:
-            plan_item.description = modifications["description"]
-        if "priority" in modifications:
-            plan_item.priority = modifications["priority"]
-        if "due_date" in modifications:
-            try:
-                plan_item.due_date = date.fromisoformat(modifications["due_date"])
-            except Exception:
-                plan_item.due_date = None
-        if "responsible_officer" in modifications:
-            plan_item.responsible_officer = modifications["responsible_officer"]
-        if "risk_if_ignored" in modifications:
-            plan_item.risk_if_ignored = modifications["risk_if_ignored"]
-        if "suggested_next_step" in modifications:
-            plan_item.suggested_next_step = modifications["suggested_next_step"]
-        if "notes" in modifications:
-            plan_item.notes = modifications["notes"]
-        plan_item.verification_status = VerificationStatus.MODIFIED
-    elif review_request.action == ActionPlanDecision.REJECT:
-        plan_item.verification_status = VerificationStatus.REJECTED
-    else:
-        raise HTTPException(status_code=400, detail="Invalid review action")
+    try:
+        plan_item = review_service.review_action_plan_item(
+            db=db,
+            item_id=plan_item.id,
+            action=review_request.action,
+            modifications=review_request.modifications,
+            comments=review_request.rationale,
+            expected_version=review_request.expected_version,
+            reviewer_id=current_user.id,
+        )
+    except StaleDataError:
+        db.rollback()
+        latest = db.query(ActionPlanItem).filter(ActionPlanItem.id == plan_item.id).first()
+        last_modified_by = None
+        last_modified_at = None
+        current_version = latest.version if latest else plan_item.version
+        if latest and latest.verified_by_user:
+            last_modified_by = latest.verified_by_user.full_name
+            last_modified_at = latest.verification_date.isoformat() if latest.verification_date else None
+        return build_stale_review_response(
+            current_version=current_version,
+            last_modified_by=last_modified_by,
+            last_modified_at=last_modified_at,
+        )
 
-    plan_item.verified_by_user_id = current_user.id
-    plan_item.verification_date = datetime.utcnow()
-    db.commit()
-    db.refresh(plan_item)
-
-    return _build_action_plan_item_response(plan_item)
+    return ActionPlanItemResponse.model_validate(_build_action_plan_item_response(plan_item), strict=False)
 
 
 @router.put(
@@ -242,7 +237,7 @@ async def edit_action_plan_item(
     db.commit()
     db.refresh(plan_item)
 
-    return _build_action_plan_item_response(plan_item)
+    return ActionPlanItemResponse.model_validate(_build_action_plan_item_response(plan_item), strict=False)
 
 
 @router.post(
@@ -273,8 +268,10 @@ async def finalize_action_plan(
         raise HTTPException(status_code=400, detail="All action plan items must be reviewed before finalization")
 
     if all(field.verification_status in {VerificationStatus.APPROVED, VerificationStatus.EDITED} for field in document.extracted_fields):
-        document.processing_status = ProcessingStatus.VERIFIED
-    document.updated_at = datetime.utcnow()
+        if document.processing_status == ProcessingStatus.PENDING_REVIEW:
+            document.transition_to(ProcessingStatus.UNDER_REVIEW, current_user.id, reason="Action plan finalized")
+        if document.processing_status == ProcessingStatus.UNDER_REVIEW:
+            document.transition_to(ProcessingStatus.VERIFIED, current_user.id, reason="Action plan finalized")
     db.commit()
 
     await log_action_plan_verified(db, document_id=document.id, user_id=current_user.id, verified_count=len(action_items))

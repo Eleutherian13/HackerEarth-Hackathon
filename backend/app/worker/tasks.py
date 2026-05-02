@@ -99,8 +99,7 @@ def process_document(
             return _mark_job_failed(db, job, document, str(e), 1)
 
         # Step 2: Extract text based on type
-        document.processing_status = ProcessingStatus.EXTRACTING
-        document.updated_at = datetime.utcnow()
+        document.transition_to(ProcessingStatus.EXTRACTING, updated_by=None, reason="Begin extraction")
         db.commit()
 
         if pdf_type.value == "TEXT_BASED":
@@ -148,8 +147,7 @@ def process_document(
                 3,
             )
 
-        document.processing_status = ProcessingStatus.PENDING_REVIEW
-        document.updated_at = datetime.utcnow()
+        document.transition_to(ProcessingStatus.PENDING_REVIEW, updated_by=None, reason="Extraction complete")
 
         extraction_job.status = JobStatus.COMPLETED
         extraction_job.completed_at = datetime.utcnow()
@@ -448,9 +446,13 @@ def _mark_job_failed(
             job.completed_at = datetime.utcnow()
 
         if document:
-            document.processing_status = ProcessingStatus.FAILED
+            try:
+                document.transition_to(ProcessingStatus.FAILED, updated_by=None, reason=error_message)
+            except Exception:
+                # If transition fails for any reason, still set fields and continue to persist error
+                document.processing_status = ProcessingStatus.FAILED
+                document.updated_at = datetime.utcnow()
             document.error_message = error_message
-            document.updated_at = datetime.utcnow()
 
         db.commit()
     except Exception as e:

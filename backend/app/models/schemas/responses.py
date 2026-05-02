@@ -9,6 +9,7 @@ from pydantic import ConfigDict, Field, computed_field, field_validator
 
 from app.models.enums import (
     CompletionStatus,
+    Priority,
     ProcessingStatus,
     VerificationStatus,
 )
@@ -68,7 +69,7 @@ def _processing_status_label(status: ProcessingStatus) -> str:
 
 class DocumentResponse(StrictSchema):
     model_config = ConfigDict(
-        strict=True,
+        strict=False,
         extra="forbid",
         from_attributes=True,
         populate_by_name=True,
@@ -162,6 +163,7 @@ class ExtractedFieldResponse(StrictSchema):
                         {"text": "WP(C) 123/2025", "page": 1, "bbox": [12.0, 18.0, 200.0, 40.0]}
                     ],
                     "verification_status": "APPROVED",
+                    "version": 2,
                     "verified_by_user_id": "9c5f4d76-7d29-4b9d-8d7a-0f47b2a8d8ca",
                     "verified_at": "2026-01-12T10:06:00Z",
                     "edit_history": [],
@@ -185,13 +187,14 @@ class ExtractedFieldResponse(StrictSchema):
     source_page_ids: list[int]
     source_quotes: list[HighlightQuote]
     verification_status: VerificationStatus
+    version: int
     verified_by_user_id: UUID | None = None
     verified_at: datetime | None = None
     edit_history: list[dict[str, Any]]
     reviewer_comments: str | None = None
     created_at: datetime
     updated_at: datetime
-    verification_status_badge: StatusBadge
+    verification_status_badge: StatusBadge | None = None
     reviewer_info: ReviewerInfo | None = None
 
     @field_validator("value", "field_type", "extraction_method", mode="before")
@@ -236,6 +239,7 @@ class ActionPlanItemResponse(StrictSchema):
                     "suggested_next_step": "Assign to legal cell.",
                     "source_evidence_links": [],
                     "verification_status": "APPROVED",
+                    "version": 2,
                     "verified_by_user_id": "9c5f4d76-7d29-4b9d-8d7a-0f47b2a8d8ca",
                     "verification_date": "2026-01-12T10:06:00Z",
                     "completion_status": "NOT_STARTED",
@@ -267,6 +271,7 @@ class ActionPlanItemResponse(StrictSchema):
     source_evidence_links: list[SourceEvidenceLink]
     source_evidence: dict[str, Any]
     verification_status: VerificationStatus
+    version: int
     verified_by_user_id: UUID | None = None
     verification_date: datetime | None = None
     completion_status: CompletionStatus
@@ -472,7 +477,6 @@ class ErrorResponse(StrictSchema):
             ]
         },
     )
-
     error_code: str
     message: str
     details: dict[str, Any] | None = None
@@ -490,3 +494,9 @@ class ErrorResponse(StrictSchema):
         if isinstance(value, dict):
             return value
         raise TypeError("details must be a dict or None")
+
+
+DocumentResponse.model_rebuild()
+ExtractedFieldResponse.model_rebuild()
+ActionPlanItemResponse.model_rebuild()
+ReviewQueueItemResponse.model_rebuild()

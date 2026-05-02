@@ -180,14 +180,25 @@ class JSONFormatter(Formatter):
         return json.dumps(log_obj, default=str, ensure_ascii=False)
 
 
+class RequestIdFilter(logging.Filter):
+    """Ensure text log formatting always has a request_id attribute."""
+
+    def filter(self, record: LogRecord) -> bool:
+        if not hasattr(record, "request_id"):
+            record.request_id = request_id_var.get() or "-"
+        return True
+
+
 class StructuredLogger(logging.Logger):
     """Extended logger with structured logging methods."""
 
     def log_context(self, level: int, msg: str, **kwargs) -> None:
         """Log with additional context fields."""
         extra = kwargs.pop("extra", {})
+        exc_info = kwargs.pop("exc_info", None)
+        stack_info = kwargs.pop("stack_info", None)
         extra.update(kwargs)
-        self.log(level, msg, extra=extra)
+        self.log(level, msg, exc_info=exc_info, stack_info=stack_info, extra=extra)
 
     def debug_context(self, msg: str, **kwargs) -> None:
         """Debug with context."""
@@ -221,6 +232,7 @@ def configure_logging() -> None:
     # Stdout handler (always present for container environments)
     stdout_handler = logging.StreamHandler(sys.stdout)
     stdout_handler.setLevel(log_level)
+    stdout_handler.addFilter(RequestIdFilter())
 
     if settings.LOG_FORMAT == "json":
         stdout_handler.setFormatter(JSONFormatter())
@@ -239,6 +251,7 @@ def configure_logging() -> None:
 
         file_handler = logging.FileHandler(log_file)
         file_handler.setLevel(log_level)
+        file_handler.addFilter(RequestIdFilter())
 
         if settings.LOG_FORMAT == "json":
             file_handler.setFormatter(JSONFormatter())

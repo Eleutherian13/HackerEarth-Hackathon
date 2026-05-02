@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { ReviewApiError } from './useExtractionReview';
 
 export type HumanReviewAction = 'APPROVE' | 'EDIT' | 'REJECT';
 
@@ -8,6 +9,7 @@ export interface DocumentReviewRequest {
   edited_value?: string;
   comments?: string;
   edit_reason?: string;
+  expected_version: number;
 }
 
 export const useDocumentReview = (documentId?: string) => {
@@ -36,10 +38,17 @@ export const useDocumentReview = (documentId?: string) => {
       );
 
       if (!response.ok) {
-        const errorText = await response.text();
+        const payload = await response.json().catch(() => null);
+        if (response.status === 409 && payload) {
+          const message = payload.message || 'This field was just modified by another reviewer';
+          setError(message);
+          throw new ReviewApiError(message, response.status, payload);
+        }
+
+        const errorText = typeof payload === 'string' ? payload : null;
         const message = errorText || response.statusText || 'Review submission failed';
         setError(message);
-        throw new Error(message);
+        throw new ReviewApiError(message, response.status);
       }
 
       const result = await response.json();

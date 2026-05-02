@@ -3,8 +3,6 @@
 import os
 import pytest
 from pathlib import Path
-from tests.factories import make_department, make_user
-from app.models.enums import UserRole
 
 # Ensure required application settings are available during test collection.
 os.environ.setdefault("SECRET_KEY", "x" * 32)
@@ -16,6 +14,9 @@ os.environ.setdefault("CELERY_RESULT_BACKEND", "redis://localhost:6379/2")
 os.environ["ENVIRONMENT"] = "development"
 os.environ["DEBUG"] = "false"
 os.environ["TESTING"] = "true"
+
+from tests.factories import make_department, make_user
+from app.models.enums import UserRole
 
 # Get fixtures directory
 FIXTURES_DIR = Path(__file__).parent / "fixtures"

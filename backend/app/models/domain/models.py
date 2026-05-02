@@ -3,7 +3,8 @@
 from __future__ import annotations
 
 import uuid
-from datetime import date, datetime
+from datetime import date, datetime, timezone
+from contextlib import nullcontext
 
 from sqlalchemy import (
     BigInteger,
@@ -24,6 +25,7 @@ from sqlalchemy import (
 )
 from sqlalchemy.dialects.postgresql import INET, JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.orm import object_session
 
 from app.models.enums import (
     ActionType,
@@ -42,6 +44,7 @@ from app.models.enums import (
 )
 
 from .base import Base, CreatedAtMixin, TimestampMixin
+from app.services.ingestion.state_machine import transition_validator, InvalidStatusTransition
 
 
 UUID_TYPE = UUID(as_uuid=True)
@@ -137,6 +140,48 @@ class Document(TimestampMixin, Base):
     action_plan_items = relationship("ActionPlanItem", back_populates="document", cascade="all, delete-orphan", passive_deletes=True)
     review_sessions = relationship("ReviewSession", back_populates="document", cascade="all, delete-orphan", passive_deletes=True)
     audit_logs = relationship("AuditLog", back_populates="document")
+    def transition_to(self, new_status: ProcessingStatus, updated_by: "uuid.UUID" | None, reason: str | None = None) -> None:
+        """Transition document processing status with validation, audit log, and atomicity.
+
+        updated_by may be None for system-initiated transitions.
+        """
+        session = object_session(self)
+        if session is None:
+            raise RuntimeError("Document.transition_to requires a SQLAlchemy session (object_session returned None)")
+
+        old_status = self.processing_status
+
+        # Validate transition (will log attempts)
+        transition_validator(old_status, new_status)
+
+        # Apply change inside a transaction and create audit log
+        from app.models.domain.models import AuditLog
+        from app.models.enums import AuditEventType
+
+        transaction = session.begin() if not session.in_transaction() else nullcontext()
+        with transaction:
+            self.processing_status = new_status
+            self.updated_at = datetime.now(timezone.utc)
+
+            changes = {
+                "old_status": old_status.value if old_status else None,
+                "new_status": new_status.value if new_status else None,
+            }
+            if reason:
+                changes["reason"] = reason
+
+            audit = AuditLog(
+                id=uuid.uuid4(),
+                event_type=AuditEventType.USER_ACTION,
+                user_id=updated_by,
+                document_id=self.id,
+                entity_type="Document",
+                entity_id=self.id,
+                action="status_transition",
+                changes=changes,
+                request_id=None,
+            )
+            session.add(audit)
     processing_jobs = relationship("ProcessingJob", back_populates="document", cascade="all, delete-orphan", passive_deletes=True)
 
     __table_args__ = (
@@ -207,6 +252,12 @@ class ExtractedField(TimestampMixin, Base):
         SQLEnum(VerificationStatus, name="verification_status", native_enum=True),
         nullable=False,
         default=VerificationStatus.UNVERIFIED,
+    )
+    version: Mapped[int] = mapped_column(
+        Integer,
+        nullable=False,
+        default=1,
+        server_default=text("1"),
     )
     verified_by_user_id: Mapped[uuid.UUID | None] = mapped_column(
         UUID_TYPE,
@@ -283,6 +334,12 @@ class ActionPlanItem(TimestampMixin, Base):
         SQLEnum(VerificationStatus, name="verification_status", native_enum=True),
         nullable=False,
         default=VerificationStatus.PENDING,
+    )
+    version: Mapped[int] = mapped_column(
+        Integer,
+        nullable=False,
+        default=1,
+        server_default=text("1"),
     )
     verified_by_user_id: Mapped[uuid.UUID | None] = mapped_column(
         UUID_TYPE,
