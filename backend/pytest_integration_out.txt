@@ -1,0 +1,1788 @@
+FF                                                                       [100%]
+================================== FAILURES ===================================
+___________________ test_admin_users_endpoint_returns_users ___________________
+  + Exception Group Traceback (most recent call last):
+  |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\_utils.py", line 79, in collapse_excgroups
+  |     yield
+  |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\middleware\base.py", line 192, in __call__
+  |     async with anyio.create_task_group() as task_group:
+  |                ~~~~~~~~~~~~~~~~~~~~~~~^^
+  |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\anyio\_backends\_asyncio.py", line 783, in __aexit__
+  |     raise BaseExceptionGroup(
+  |         "unhandled errors in a TaskGroup", self._exceptions
+  |     ) from None
+  | ExceptionGroup: unhandled errors in a TaskGroup (1 sub-exception)
+  +-+---------------- 1 ----------------
+    | Traceback (most recent call last):
+    |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\_pytest\runner.py", line 353, in from_call
+    |     result: TResult | None = func()
+    |                              ~~~~^^
+    |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\_pytest\runner.py", line 245, in <lambda>
+    |     lambda: runtest_hook(item=item, **kwds),
+    |             ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+    |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\pluggy\_hooks.py", line 512, in __call__
+    |     return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+    |            ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\pluggy\_manager.py", line 120, in _hookexec
+    |     return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+    |            ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\pluggy\_callers.py", line 167, in _multicall
+    |     raise exception
+    |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\pluggy\_callers.py", line 139, in _multicall
+    |     teardown.throw(exception)
+    |     ~~~~~~~~~~~~~~^^^^^^^^^^^
+    |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\_pytest\logging.py", line 850, in pytest_runtest_call
+    |     yield
+    |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\pluggy\_callers.py", line 139, in _multicall
+    |     teardown.throw(exception)
+    |     ~~~~~~~~~~~~~~^^^^^^^^^^^
+    |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\_pytest\capture.py", line 900, in pytest_runtest_call
+    |     return (yield)
+    |             ^^^^^
+    |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\pluggy\_callers.py", line 139, in _multicall
+    |     teardown.throw(exception)
+    |     ~~~~~~~~~~~~~~^^^^^^^^^^^
+    |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\pluggy\_callers.py", line 53, in run_old_style_hookwrapper
+    |     return result.get_result()
+    |            ~~~~~~~~~~~~~~~~~^^
+    |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\pluggy\_result.py", line 103, in get_result
+    |     raise exc.with_traceback(tb)
+    |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\pluggy\_callers.py", line 38, in run_old_style_hookwrapper
+    |     res = yield
+    |           ^^^^^
+    |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\pluggy\_callers.py", line 139, in _multicall
+    |     teardown.throw(exception)
+    |     ~~~~~~~~~~~~~~^^^^^^^^^^^
+    |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\_pytest\skipping.py", line 268, in pytest_runtest_call
+    |     return (yield)
+    |             ^^^^^
+    |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\pluggy\_callers.py", line 121, in _multicall
+    |     res = hook_impl.function(*args)
+    |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\_pytest\runner.py", line 179, in pytest_runtest_call
+    |     item.runtest()
+    |     ~~~~~~~~~~~~^^
+    |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\_pytest\python.py", line 1720, in runtest
+    |     self.ihook.pytest_pyfunc_call(pyfuncitem=self)
+    |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+    |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\pluggy\_hooks.py", line 512, in __call__
+    |     return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+    |            ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\pluggy\_manager.py", line 120, in _hookexec
+    |     return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+    |            ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\pluggy\_callers.py", line 167, in _multicall
+    |     raise exception
+    |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\pluggy\_callers.py", line 139, in _multicall
+    |     teardown.throw(exception)
+    |     ~~~~~~~~~~~~~~^^^^^^^^^^^
+    |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\pluggy\_callers.py", line 53, in run_old_style_hookwrapper
+    |     return result.get_result()
+    |            ~~~~~~~~~~~~~~~~~^^
+    |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\pluggy\_result.py", line 103, in get_result
+    |     raise exc.with_traceback(tb)
+    |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\pluggy\_callers.py", line 38, in run_old_style_hookwrapper
+    |     res = yield
+    |           ^^^^^
+    |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\pluggy\_callers.py", line 121, in _multicall
+    |     res = hook_impl.function(*args)
+    |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\_pytest\python.py", line 166, in pytest_pyfunc_call
+    |     result = testfunction(**testargs)
+    |   File "C:\Users\manas\OneDrive\Desktop\LAOS\backend\tests\integration\test_admin_api.py", line 51, in test_admin_users_endpoint_returns_users
+    |     response = client.get("/api/v1/admin/users")
+    |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\testclient.py", line 473, in get
+    |     return super().get(
+    |            ~~~~~~~~~~~^
+    |         url,
+    |         ^^^^
+    |     ...<6 lines>...
+    |         extensions=extensions,
+    |         ^^^^^^^^^^^^^^^^^^^^^^
+    |     )
+    |     ^
+    |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\httpx\_client.py", line 1066, in get
+    |     return self.request(
+    |            ~~~~~~~~~~~~^
+    |         "GET",
+    |         ^^^^^^
+    |     ...<7 lines>...
+    |         extensions=extensions,
+    |         ^^^^^^^^^^^^^^^^^^^^^^
+    |     )
+    |     ^
+    |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\testclient.py", line 445, in request
+    |     return super().request(
+    |            ~~~~~~~~~~~~~~~^
+    |         method,
+    |         ^^^^^^^
+    |     ...<11 lines>...
+    |         extensions=extensions,
+    |         ^^^^^^^^^^^^^^^^^^^^^^
+    |     )
+    |     ^
+    |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\httpx\_client.py", line 837, in request
+    |     return self.send(request, auth=auth, follow_redirects=follow_redirects)
+    |            ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\httpx\_client.py", line 926, in send
+    |     response = self._send_handling_auth(
+    |         request,
+    |     ...<2 lines>...
+    |         history=[],
+    |     )
+    |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\httpx\_client.py", line 954, in _send_handling_auth
+    |     response = self._send_handling_redirects(
+    |         request,
+    |         follow_redirects=follow_redirects,
+    |         history=history,
+    |     )
+    |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\httpx\_client.py", line 991, in _send_handling_redirects
+    |     response = self._send_single_request(request)
+    |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\httpx\_client.py", line 1027, in _send_single_request
+    |     response = transport.handle_request(request)
+    |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\testclient.py", line 348, in handle_request
+    |     raise exc
+    |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\testclient.py", line 345, in handle_request
+    |     portal.call(self.app, scope, receive, send)
+    |     ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\anyio\from_thread.py", line 326, in call
+    |     return cast(T_Retval, self.start_task_soon(func, *args).result())
+    |                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+    |   File "C:\Program Files\Python314\Lib\concurrent\futures\_base.py", line 450, in result
+    |     return self.__get_result()
+    |            ~~~~~~~~~~~~~~~~~^^
+    |   File "C:\Program Files\Python314\Lib\concurrent\futures\_base.py", line 395, in __get_result
+    |     raise self._exception
+    |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\anyio\from_thread.py", line 257, in _call_func
+    |     retval = await retval_or_awaitable
+    |              ^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\fastapi\applications.py", line 1135, in __call__
+    |     await super().__call__(scope, receive, send)
+    |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\applications.py", line 107, in __call__
+    |     await self.middleware_stack(scope, receive, send)
+    |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\middleware\errors.py", line 186, in __call__
+    |     raise exc
+    |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\middleware\errors.py", line 164, in __call__
+    |     await self.app(scope, receive, _send)
+    |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\middleware\cors.py", line 85, in __call__
+    |     await self.app(scope, receive, send)
+    |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\middleware\base.py", line 191, in __call__
+    |     with recv_stream, send_stream, collapse_excgroups():
+    |                                    ~~~~~~~~~~~~~~~~~~^^
+    |   File "C:\Program Files\Python314\Lib\contextlib.py", line 162, in __exit__
+    |     self.gen.throw(value)
+    |     ~~~~~~~~~~~~~~^^^^^^^
+    |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\_utils.py", line 85, in collapse_excgroups
+    |     raise exc
+    |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\middleware\base.py", line 193, in __call__
+    |     response = await self.dispatch_func(request, call_next)
+    |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "C:\Users\manas\OneDrive\Desktop\LAOS\backend\app\api\middleware\auth.py", line 58, in dispatch
+    |     await self._apply_rate_limit(request)
+    |   File "C:\Users\manas\OneDrive\Desktop\LAOS\backend\app\api\middleware\auth.py", line 87, in _apply_rate_limit
+    |     minute_count = await redis_client.incr(minute_key)
+    |                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\redis\asyncio\client.py", line 611, in execute_command
+    |     conn = self.connection or await pool.get_connection(command_name, **options)
+    |                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\redis\asyncio\connection.py", line 1064, in get_connection
+    |     await self.ensure_connection(connection)
+    |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\redis\asyncio\connection.py", line 1097, in ensure_connection
+    |     await connection.connect()
+    |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\redis\asyncio\connection.py", line 289, in connect
+    |     raise ConnectionError(self._error_message(e))
+    | redis.exceptions.ConnectionError: Error 22 connecting to localhost:6379. The remote computer refused the network connection.
+    +------------------------------------
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\manas\OneDrive\Desktop\LAOS\backend\tests\integration\test_admin_api.py", line 51, in test_admin_users_endpoint_returns_users
+    response = client.get("/api/v1/admin/users")
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\testclient.py", line 473, in get
+    return super().get(
+           ~~~~~~~~~~~^
+        url,
+        ^^^^
+    ...<6 lines>...
+        extensions=extensions,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\httpx\_client.py", line 1066, in get
+    return self.request(
+           ~~~~~~~~~~~~^
+        "GET",
+        ^^^^^^
+    ...<7 lines>...
+        extensions=extensions,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\testclient.py", line 445, in request
+    return super().request(
+           ~~~~~~~~~~~~~~~^
+        method,
+        ^^^^^^^
+    ...<11 lines>...
+        extensions=extensions,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\httpx\_client.py", line 837, in request
+    return self.send(request, auth=auth, follow_redirects=follow_redirects)
+           ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\httpx\_client.py", line 926, in send
+    response = self._send_handling_auth(
+        request,
+    ...<2 lines>...
+        history=[],
+    )
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\httpx\_client.py", line 954, in _send_handling_auth
+    response = self._send_handling_redirects(
+        request,
+        follow_redirects=follow_redirects,
+        history=history,
+    )
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\httpx\_client.py", line 991, in _send_handling_redirects
+    response = self._send_single_request(request)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\httpx\_client.py", line 1027, in _send_single_request
+    response = transport.handle_request(request)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\testclient.py", line 348, in handle_request
+    raise exc
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\testclient.py", line 345, in handle_request
+    portal.call(self.app, scope, receive, send)
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\anyio\from_thread.py", line 326, in call
+    return cast(T_Retval, self.start_task_soon(func, *args).result())
+                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Program Files\Python314\Lib\concurrent\futures\_base.py", line 450, in result
+    return self.__get_result()
+           ~~~~~~~~~~~~~~~~~^^
+  File "C:\Program Files\Python314\Lib\concurrent\futures\_base.py", line 395, in __get_result
+    raise self._exception
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\anyio\from_thread.py", line 257, in _call_func
+    retval = await retval_or_awaitable
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\fastapi\applications.py", line 1135, in __call__
+    await super().__call__(scope, receive, send)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\applications.py", line 107, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\middleware\errors.py", line 186, in __call__
+    raise exc
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\middleware\errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\middleware\cors.py", line 85, in __call__
+    await self.app(scope, receive, send)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\middleware\base.py", line 191, in __call__
+    with recv_stream, send_stream, collapse_excgroups():
+                                   ~~~~~~~~~~~~~~~~~~^^
+  File "C:\Program Files\Python314\Lib\contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\_utils.py", line 85, in collapse_excgroups
+    raise exc
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\middleware\base.py", line 193, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\manas\OneDrive\Desktop\LAOS\backend\app\api\middleware\auth.py", line 58, in dispatch
+    await self._apply_rate_limit(request)
+  File "C:\Users\manas\OneDrive\Desktop\LAOS\backend\app\api\middleware\auth.py", line 87, in _apply_rate_limit
+    minute_count = await redis_client.incr(minute_key)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\redis\asyncio\client.py", line 611, in execute_command
+    conn = self.connection or await pool.get_connection(command_name, **options)
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\redis\asyncio\connection.py", line 1064, in get_connection
+    await self.ensure_connection(connection)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\redis\asyncio\connection.py", line 1097, in ensure_connection
+    await connection.connect()
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\redis\asyncio\connection.py", line 289, in connect
+    raise ConnectionError(self._error_message(e))
+redis.exceptions.ConnectionError: Error 22 connecting to localhost:6379. The remote computer refused the network connection.
+
+During handling of the above exception, another exception occurred:
+
+client = <starlette.testclient.TestClient object at 0x000001FD1B17F380>
+
+    def test_admin_users_endpoint_returns_users(client):
+>       response = client.get("/api/v1/admin/users")
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\integration\test_admin_api.py:51: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+..\..\..\..\AppData\Roaming\Python\Python314\site-packages\starlette\testclient.py:473: in get
+    return super().get(
+..\..\..\..\AppData\Roaming\Python\Python314\site-packages\httpx\_client.py:1066: in get
+    return self.request(
+..\..\..\..\AppData\Roaming\Python\Python314\site-packages\starlette\testclient.py:445: in request
+    return super().request(
+..\..\..\..\AppData\Roaming\Python\Python314\site-packages\httpx\_client.py:837: in request
+    return self.send(request, auth=auth, follow_redirects=follow_redirects)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\..\..\AppData\Roaming\Python\Python314\site-packages\httpx\_client.py:926: in send
+    response = self._send_handling_auth(
+..\..\..\..\AppData\Roaming\Python\Python314\site-packages\httpx\_client.py:954: in _send_handling_auth
+    response = self._send_handling_redirects(
+..\..\..\..\AppData\Roaming\Python\Python314\site-packages\httpx\_client.py:991: in _send_handling_redirects
+    response = self._send_single_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\..\..\AppData\Roaming\Python\Python314\site-packages\httpx\_client.py:1027: in _send_single_request
+    response = transport.handle_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\..\..\AppData\Roaming\Python\Python314\site-packages\starlette\testclient.py:348: in handle_request
+    raise exc
+..\..\..\..\AppData\Roaming\Python\Python314\site-packages\starlette\testclient.py:345: in handle_request
+    portal.call(self.app, scope, receive, send)
+..\..\..\..\AppData\Roaming\Python\Python314\site-packages\anyio\from_thread.py:326: in call
+    return cast(T_Retval, self.start_task_soon(func, *args).result())
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Program Files\Python314\Lib\concurrent\futures\_base.py:450: in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+C:\Program Files\Python314\Lib\concurrent\futures\_base.py:395: in __get_result
+    raise self._exception
+..\..\..\..\AppData\Roaming\Python\Python314\site-packages\anyio\from_thread.py:257: in _call_func
+    retval = await retval_or_awaitable
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\..\..\AppData\Roaming\Python\Python314\site-packages\fastapi\applications.py:1135: in __call__
+    await super().__call__(scope, receive, send)
+..\..\..\..\AppData\Roaming\Python\Python314\site-packages\starlette\applications.py:107: in __call__
+    await self.middleware_stack(scope, receive, send)
+..\..\..\..\AppData\Roaming\Python\Python314\site-packages\starlette\middleware\errors.py:186: in __call__
+    raise exc
+..\..\..\..\AppData\Roaming\Python\Python314\site-packages\starlette\middleware\errors.py:164: in __call__
+    await self.app(scope, receive, _send)
+..\..\..\..\AppData\Roaming\Python\Python314\site-packages\starlette\middleware\cors.py:85: in __call__
+    await self.app(scope, receive, send)
+..\..\..\..\AppData\Roaming\Python\Python314\site-packages\starlette\middleware\base.py:191: in __call__
+    with recv_stream, send_stream, collapse_excgroups():
+                                   ^^^^^^^^^^^^^^^^^^^^
+C:\Program Files\Python314\Lib\contextlib.py:162: in __exit__
+    self.gen.throw(value)
+..\..\..\..\AppData\Roaming\Python\Python314\site-packages\starlette\_utils.py:85: in collapse_excgroups
+    raise exc
+..\..\..\..\AppData\Roaming\Python\Python314\site-packages\starlette\middleware\base.py:193: in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app\api\middleware\auth.py:58: in dispatch
+    await self._apply_rate_limit(request)
+app\api\middleware\auth.py:87: in _apply_rate_limit
+    minute_count = await redis_client.incr(minute_key)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\..\..\AppData\Roaming\Python\Python314\site-packages\redis\asyncio\client.py:611: in execute_command
+    conn = self.connection or await pool.get_connection(command_name, **options)
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\..\..\AppData\Roaming\Python\Python314\site-packages\redis\asyncio\connection.py:1064: in get_connection
+    await self.ensure_connection(connection)
+..\..\..\..\AppData\Roaming\Python\Python314\site-packages\redis\asyncio\connection.py:1097: in ensure_connection
+    await connection.connect()
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <redis.asyncio.connection.Connection(host=localhost,port=6379,db=0)>
+
+    async def connect(self):
+        """Connects to the Redis server if not already connected"""
+        if self.is_connected:
+            return
+        try:
+            await self.retry.call_with_retry(
+                lambda: self._connect(), lambda error: self.disconnect()
+            )
+        except asyncio.CancelledError:
+            raise  # in 3.7 and earlier, this is an Exception, not BaseException
+        except (socket.timeout, asyncio.TimeoutError):
+            raise TimeoutError("Timeout connecting to server")
+        except OSError as e:
+>           raise ConnectionError(self._error_message(e))
+E           redis.exceptions.ConnectionError: Error 22 connecting to localhost:6379. The remote computer refused the network connection.
+
+..\..\..\..\AppData\Roaming\Python\Python314\site-packages\redis\asyncio\connection.py:289: ConnectionError
+---------------------------- Captured stderr setup ----------------------------
+--- Logging error ---
+Traceback (most recent call last):
+  File "C:\Program Files\Python314\Lib\logging\__init__.py", line 472, in format
+    return self._format(record)
+           ~~~~~~~~~~~~^^^^^^^^
+  File "C:\Program Files\Python314\Lib\logging\__init__.py", line 468, in _format
+    return self._fmt % values
+           ~~~~~~~~~~^~~~~~~~
+KeyError: 'request_id'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Program Files\Python314\Lib\logging\__init__.py", line 1151, in emit
+    msg = self.format(record)
+  File "C:\Program Files\Python314\Lib\logging\__init__.py", line 999, in format
+    return fmt.format(record)
+           ~~~~~~~~~~^^^^^^^^
+  File "C:\Program Files\Python314\Lib\logging\__init__.py", line 715, in format
+    s = self.formatMessage(record)
+  File "C:\Program Files\Python314\Lib\logging\__init__.py", line 684, in formatMessage
+    return self._style.format(record)
+           ~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "C:\Program Files\Python314\Lib\logging\__init__.py", line 474, in format
+    raise ValueError('Formatting field not found in record: %s' % e)
+ValueError: Formatting field not found in record: 'request_id'
+Call stack:
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\pytest\__main__.py", line 9, in <module>
+    raise SystemExit(pytest.console_main())
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\_pytest\config\__init__.py", line 223, in console_main
+    code = main()
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\_pytest\config\__init__.py", line 199, in main
+    ret: ExitCode | int = config.hook.pytest_cmdline_main(config=config)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\pluggy\_hooks.py", line 512, in __call__
+    return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\pluggy\_manager.py", line 120, in _hookexec
+    return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\pluggy\_callers.py", line 121, in _multicall
+    res = hook_impl.function(*args)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\_pytest\main.py", line 365, in pytest_cmdline_main
+    return wrap_session(config, _main)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\_pytest\main.py", line 318, in wrap_session
+    session.exitstatus = doit(config, session) or 0
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\_pytest\main.py", line 372, in _main
+    config.hook.pytest_runtestloop(session=session)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\pluggy\_hooks.py", line 512, in __call__
+    return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\pluggy\_manager.py", line 120, in _hookexec
+    return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\pluggy\_callers.py", line 121, in _multicall
+    res = hook_impl.function(*args)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\_pytest\main.py", line 396, in pytest_runtestloop
+    item.config.hook.pytest_runtest_protocol(item=item, nextitem=nextitem)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\pluggy\_hooks.py", line 512, in __call__
+    return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\pluggy\_manager.py", line 120, in _hookexec
+    return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\pluggy\_callers.py", line 121, in _multicall
+    res = hook_impl.function(*args)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\_pytest\runner.py", line 118, in pytest_runtest_protocol
+    runtestprotocol(item, nextitem=nextitem)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\_pytest\runner.py", line 131, in runtestprotocol
+    rep = call_and_report(item, "setup", log)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\_pytest\runner.py", line 244, in call_and_report
+    call = CallInfo.from_call(
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\_pytest\runner.py", line 353, in from_call
+    result: TResult | None = func()
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\_pytest\runner.py", line 245, in <lambda>
+    lambda: runtest_hook(item=item, **kwds),
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\pluggy\_hooks.py", line 512, in __call__
+    return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\pluggy\_manager.py", line 120, in _hookexec
+    return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\pluggy\_callers.py", line 121, in _multicall
+    res = hook_impl.function(*args)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\_pytest\runner.py", line 165, in pytest_runtest_setup
+    item.session._setupstate.setup(item)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\_pytest\runner.py", line 523, in setup
+    col.setup()
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\_pytest\python.py", line 1723, in setup
+    self._request._fillfixtures()
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\_pytest\fixtures.py", line 707, in _fillfixtures
+    item.funcargs[argname] = self.getfixturevalue(argname)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\_pytest\fixtures.py", line 539, in getfixturevalue
+    fixturedef = self._get_active_fixturedef(argname)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\_pytest\fixtures.py", line 627, in _get_active_fixturedef
+    fixturedef.execute(request=subrequest)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\_pytest\fixtures.py", line 1110, in execute
+    result: FixtureValue = ihook.pytest_fixture_setup(
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\pluggy\_hooks.py", line 512, in __call__
+    return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\pluggy\_manager.py", line 120, in _hookexec
+    return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\pluggy\_callers.py", line 121, in _multicall
+    res = hook_impl.function(*args)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\_pytest\fixtures.py", line 1202, in pytest_fixture_setup
+    result = call_fixture_func(fixturefunc, request, kwargs)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\_pytest\fixtures.py", line 908, in call_fixture_func
+    fixture_result = next(generator)
+  File "C:\Users\manas\OneDrive\Desktop\LAOS\backend\tests\integration\test_admin_api.py", line 35, in client
+    app = create_app()
+  File "C:\Users\manas\OneDrive\Desktop\LAOS\backend\main.py", line 137, in create_app
+    logger.info("FastAPI application initialized successfully")
+Message: 'FastAPI application initialized successfully'
+Arguments: ()
+--- Logging error ---
+Traceback (most recent call last):
+  File "C:\Program Files\Python314\Lib\logging\__init__.py", line 472, in format
+    return self._format(record)
+           ~~~~~~~~~~~~^^^^^^^^
+  File "C:\Program Files\Python314\Lib\logging\__init__.py", line 468, in _format
+    return self._fmt % values
+           ~~~~~~~~~~^~~~~~~~
+KeyError: 'request_id'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Program Files\Python314\Lib\logging\__init__.py", line 1151, in emit
+    msg = self.format(record)
+  File "C:\Program Files\Python314\Lib\logging\__init__.py", line 999, in format
+    return fmt.format(record)
+           ~~~~~~~~~~^^^^^^^^
+  File "C:\Program Files\Python314\Lib\logging\__init__.py", line 715, in format
+    s = self.formatMessage(record)
+  File "C:\Program Files\Python314\Lib\logging\__init__.py", line 684, in formatMessage
+    return self._style.format(record)
+           ~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "C:\Program Files\Python314\Lib\logging\__init__.py", line 474, in format
+    raise ValueError('Formatting field not found in record: %s' % e)
+ValueError: Formatting field not found in record: 'request_id'
+Call stack:
+  File "C:\Program Files\Python314\Lib\threading.py", line 1043, in _bootstrap
+    self._bootstrap_inner()
+  File "C:\Program Files\Python314\Lib\threading.py", line 1081, in _bootstrap_inner
+    self._context.run(self.run)
+  File "C:\Program Files\Python314\Lib\threading.py", line 1023, in run
+    self._target(*self._args, **self._kwargs)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\anyio\from_thread.py", line 524, in run_blocking_portal
+    run_eventloop(
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\anyio\_core\_eventloop.py", line 75, in run
+    return async_backend.run(func, args, {}, backend_options)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\anyio\_backends\_asyncio.py", line 2364, in run
+    with Runner(debug=debug, loop_factory=loop_factory) as runner:
+  File "C:\Program Files\Python314\Lib\asyncio\runners.py", line 59, in __enter__
+    self._lazy_init()
+  File "C:\Program Files\Python314\Lib\asyncio\runners.py", line 146, in _lazy_init
+    self._loop = events.new_event_loop()
+  File "C:\Program Files\Python314\Lib\asyncio\events.py", line 844, in new_event_loop
+    return _get_event_loop_policy().new_event_loop()
+  File "C:\Program Files\Python314\Lib\asyncio\events.py", line 732, in new_event_loop
+    return self._loop_factory()
+  File "C:\Program Files\Python314\Lib\asyncio\windows_events.py", line 316, in __init__
+    super().__init__(proactor)
+  File "C:\Program Files\Python314\Lib\asyncio\proactor_events.py", line 631, in __init__
+    logger.debug('Using proactor: %s', proactor.__class__.__name__)
+Message: 'Using proactor: %s'
+Arguments: ('IocpProactor',)
+--- Logging error ---
+Traceback (most recent call last):
+  File "C:\Program Files\Python314\Lib\logging\__init__.py", line 472, in format
+    return self._format(record)
+           ~~~~~~~~~~~~^^^^^^^^
+  File "C:\Program Files\Python314\Lib\logging\__init__.py", line 468, in _format
+    return self._fmt % values
+           ~~~~~~~~~~^~~~~~~~
+KeyError: 'request_id'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Program Files\Python314\Lib\logging\__init__.py", line 1151, in emit
+    msg = self.format(record)
+  File "C:\Program Files\Python314\Lib\logging\__init__.py", line 999, in format
+    return fmt.format(record)
+           ~~~~~~~~~~^^^^^^^^
+  File "C:\Program Files\Python314\Lib\logging\__init__.py", line 715, in format
+    s = self.formatMessage(record)
+  File "C:\Program Files\Python314\Lib\logging\__init__.py", line 684, in formatMessage
+    return self._style.format(record)
+           ~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "C:\Program Files\Python314\Lib\logging\__init__.py", line 474, in format
+    raise ValueError('Formatting field not found in record: %s' % e)
+ValueError: Formatting field not found in record: 'request_id'
+Call stack:
+  File "C:\Program Files\Python314\Lib\threading.py", line 1043, in _bootstrap
+    self._bootstrap_inner()
+  File "C:\Program Files\Python314\Lib\threading.py", line 1081, in _bootstrap_inner
+    self._context.run(self.run)
+  File "C:\Program Files\Python314\Lib\threading.py", line 1023, in run
+    self._target(*self._args, **self._kwargs)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\anyio\from_thread.py", line 524, in run_blocking_portal
+    run_eventloop(
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\anyio\_core\_eventloop.py", line 75, in run
+    return async_backend.run(func, args, {}, backend_options)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\anyio\_backends\_asyncio.py", line 2365, in run
+    return runner.run(wrapper())
+  File "C:\Program Files\Python314\Lib\asyncio\runners.py", line 127, in run
+    return self._loop.run_until_complete(task)
+  File "C:\Program Files\Python314\Lib\asyncio\base_events.py", line 706, in run_until_complete
+    self.run_forever()
+  File "C:\Program Files\Python314\Lib\asyncio\base_events.py", line 677, in run_forever
+    self._run_once()
+  File "C:\Program Files\Python314\Lib\asyncio\base_events.py", line 2046, in _run_once
+    handle._run()
+  File "C:\Program Files\Python314\Lib\asyncio\events.py", line 94, in _run
+    self._context.run(self._callback, *self._args)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\anyio\from_thread.py", line 257, in _call_func
+    retval = await retval_or_awaitable
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\testclient.py", line 704, in lifespan
+    await self.app(scope, self.stream_receive.receive, self.stream_send.send)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\fastapi\applications.py", line 1135, in __call__
+    await super().__call__(scope, receive, send)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\applications.py", line 107, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\middleware\errors.py", line 151, in __call__
+    await self.app(scope, receive, send)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\middleware\cors.py", line 77, in __call__
+    await self.app(scope, receive, send)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\middleware\base.py", line 103, in __call__
+    await self.app(scope, receive, send)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\middleware\base.py", line 103, in __call__
+    await self.app(scope, receive, send)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\middleware\exceptions.py", line 49, in __call__
+    await self.app(scope, receive, send)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\fastapi\middleware\asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\routing.py", line 725, in app
+    await self.lifespan(scope, receive, send)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\routing.py", line 694, in lifespan
+    async with self.lifespan_context(app) as maybe_state:
+  File "C:\Program Files\Python314\Lib\contextlib.py", line 214, in __aenter__
+    return await anext(self.gen)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\fastapi\routing.py", line 153, in merged_lifespan
+    async with original_context(app) as maybe_original_state:
+  File "C:\Program Files\Python314\Lib\contextlib.py", line 214, in __aenter__
+    return await anext(self.gen)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\fastapi\routing.py", line 153, in merged_lifespan
+    async with original_context(app) as maybe_original_state:
+  File "C:\Program Files\Python314\Lib\contextlib.py", line 214, in __aenter__
+    return await anext(self.gen)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\fastapi\routing.py", line 153, in merged_lifespan
+    async with original_context(app) as maybe_original_state:
+  File "C:\Program Files\Python314\Lib\contextlib.py", line 214, in __aenter__
+    return await anext(self.gen)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\fastapi\routing.py", line 153, in merged_lifespan
+    async with original_context(app) as maybe_original_state:
+  File "C:\Program Files\Python314\Lib\contextlib.py", line 214, in __aenter__
+    return await anext(self.gen)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\fastapi\routing.py", line 153, in merged_lifespan
+    async with original_context(app) as maybe_original_state:
+  File "C:\Program Files\Python314\Lib\contextlib.py", line 214, in __aenter__
+    return await anext(self.gen)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\fastapi\routing.py", line 153, in merged_lifespan
+    async with original_context(app) as maybe_original_state:
+  File "C:\Program Files\Python314\Lib\contextlib.py", line 214, in __aenter__
+    return await anext(self.gen)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\fastapi\routing.py", line 153, in merged_lifespan
+    async with original_context(app) as maybe_original_state:
+  File "C:\Program Files\Python314\Lib\contextlib.py", line 214, in __aenter__
+    return await anext(self.gen)
+  File "C:\Users\manas\OneDrive\Desktop\LAOS\backend\main.py", line 40, in lifespan
+    logger.info("Starting up LAOS server...")
+Message: 'Starting up LAOS server...'
+Arguments: ()
+--- Logging error ---
+Traceback (most recent call last):
+  File "C:\Program Files\Python314\Lib\logging\__init__.py", line 472, in format
+    return self._format(record)
+           ~~~~~~~~~~~~^^^^^^^^
+  File "C:\Program Files\Python314\Lib\logging\__init__.py", line 468, in _format
+    return self._fmt % values
+           ~~~~~~~~~~^~~~~~~~
+KeyError: 'request_id'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Program Files\Python314\Lib\logging\__init__.py", line 1151, in emit
+    msg = self.format(record)
+  File "C:\Program Files\Python314\Lib\logging\__init__.py", line 999, in format
+    return fmt.format(record)
+           ~~~~~~~~~~^^^^^^^^
+  File "C:\Program Files\Python314\Lib\logging\__init__.py", line 715, in format
+    s = self.formatMessage(record)
+  File "C:\Program Files\Python314\Lib\logging\__init__.py", line 684, in formatMessage
+    return self._style.format(record)
+           ~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "C:\Program Files\Python314\Lib\logging\__init__.py", line 474, in format
+    raise ValueError('Formatting field not found in record: %s' % e)
+ValueError: Formatting field not found in record: 'request_id'
+Call stack:
+  File "C:\Program Files\Python314\Lib\threading.py", line 1043, in _bootstrap
+    self._bootstrap_inner()
+  File "C:\Program Files\Python314\Lib\threading.py", line 1081, in _bootstrap_inner
+    self._context.run(self.run)
+  File "C:\Program Files\Python314\Lib\threading.py", line 1023, in run
+    self._target(*self._args, **self._kwargs)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\anyio\from_thread.py", line 524, in run_blocking_portal
+    run_eventloop(
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\anyio\_core\_eventloop.py", line 75, in run
+    return async_backend.run(func, args, {}, backend_options)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\anyio\_backends\_asyncio.py", line 2365, in run
+    return runner.run(wrapper())
+  File "C:\Program Files\Python314\Lib\asyncio\runners.py", line 127, in run
+    return self._loop.run_until_complete(task)
+  File "C:\Program Files\Python314\Lib\asyncio\base_events.py", line 706, in run_until_complete
+    self.run_forever()
+  File "C:\Program Files\Python314\Lib\asyncio\base_events.py", line 677, in run_forever
+    self._run_once()
+  File "C:\Program Files\Python314\Lib\asyncio\base_events.py", line 2046, in _run_once
+    handle._run()
+  File "C:\Program Files\Python314\Lib\asyncio\events.py", line 94, in _run
+    self._context.run(self._callback, *self._args)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\anyio\from_thread.py", line 257, in _call_func
+    retval = await retval_or_awaitable
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\testclient.py", line 704, in lifespan
+    await self.app(scope, self.stream_receive.receive, self.stream_send.send)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\fastapi\applications.py", line 1135, in __call__
+    await super().__call__(scope, receive, send)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\applications.py", line 107, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\middleware\errors.py", line 151, in __call__
+    await self.app(scope, receive, send)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\middleware\cors.py", line 77, in __call__
+    await self.app(scope, receive, send)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\middleware\base.py", line 103, in __call__
+    await self.app(scope, receive, send)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\middleware\base.py", line 103, in __call__
+    await self.app(scope, receive, send)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\middleware\exceptions.py", line 49, in __call__
+    await self.app(scope, receive, send)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\fastapi\middleware\asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\routing.py", line 725, in app
+    await self.lifespan(scope, receive, send)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\routing.py", line 694, in lifespan
+    async with self.lifespan_context(app) as maybe_state:
+  File "C:\Program Files\Python314\Lib\contextlib.py", line 214, in __aenter__
+    return await anext(self.gen)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\fastapi\routing.py", line 153, in merged_lifespan
+    async with original_context(app) as maybe_original_state:
+  File "C:\Program Files\Python314\Lib\contextlib.py", line 214, in __aenter__
+    return await anext(self.gen)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\fastapi\routing.py", line 153, in merged_lifespan
+    async with original_context(app) as maybe_original_state:
+  File "C:\Program Files\Python314\Lib\contextlib.py", line 214, in __aenter__
+    return await anext(self.gen)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\fastapi\routing.py", line 153, in merged_lifespan
+    async with original_context(app) as maybe_original_state:
+  File "C:\Program Files\Python314\Lib\contextlib.py", line 214, in __aenter__
+    return await anext(self.gen)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\fastapi\routing.py", line 153, in merged_lifespan
+    async with original_context(app) as maybe_original_state:
+  File "C:\Program Files\Python314\Lib\contextlib.py", line 214, in __aenter__
+    return await anext(self.gen)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\fastapi\routing.py", line 153, in merged_lifespan
+    async with original_context(app) as maybe_original_state:
+  File "C:\Program Files\Python314\Lib\contextlib.py", line 214, in __aenter__
+    return await anext(self.gen)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\fastapi\routing.py", line 153, in merged_lifespan
+    async with original_context(app) as maybe_original_state:
+  File "C:\Program Files\Python314\Lib\contextlib.py", line 214, in __aenter__
+    return await anext(self.gen)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\fastapi\routing.py", line 153, in merged_lifespan
+    async with original_context(app) as maybe_original_state:
+  File "C:\Program Files\Python314\Lib\contextlib.py", line 214, in __aenter__
+    return await anext(self.gen)
+  File "C:\Users\manas\OneDrive\Desktop\LAOS\backend\main.py", line 41, in lifespan
+    logger.info_context(
+  File "C:\Users\manas\OneDrive\Desktop\LAOS\backend\app\core\logging.py", line 198, in info_context
+    self.log_context(logging.INFO, msg, **kwargs)
+  File "C:\Users\manas\OneDrive\Desktop\LAOS\backend\app\core\logging.py", line 190, in log_context
+    self.log(level, msg, extra=extra)
+Message: 'Environment: development'
+Arguments: ()
+-------------------------- Captured stderr teardown ---------------------------
+--- Logging error ---
+Traceback (most recent call last):
+  File "C:\Program Files\Python314\Lib\logging\__init__.py", line 472, in format
+    return self._format(record)
+           ~~~~~~~~~~~~^^^^^^^^
+  File "C:\Program Files\Python314\Lib\logging\__init__.py", line 468, in _format
+    return self._fmt % values
+           ~~~~~~~~~~^~~~~~~~
+KeyError: 'request_id'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Program Files\Python314\Lib\logging\__init__.py", line 1151, in emit
+    msg = self.format(record)
+  File "C:\Program Files\Python314\Lib\logging\__init__.py", line 999, in format
+    return fmt.format(record)
+           ~~~~~~~~~~^^^^^^^^
+  File "C:\Program Files\Python314\Lib\logging\__init__.py", line 715, in format
+    s = self.formatMessage(record)
+  File "C:\Program Files\Python314\Lib\logging\__init__.py", line 684, in formatMessage
+    return self._style.format(record)
+           ~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "C:\Program Files\Python314\Lib\logging\__init__.py", line 474, in format
+    raise ValueError('Formatting field not found in record: %s' % e)
+ValueError: Formatting field not found in record: 'request_id'
+Call stack:
+  File "C:\Program Files\Python314\Lib\threading.py", line 1043, in _bootstrap
+    self._bootstrap_inner()
+  File "C:\Program Files\Python314\Lib\threading.py", line 1081, in _bootstrap_inner
+    self._context.run(self.run)
+  File "C:\Program Files\Python314\Lib\threading.py", line 1023, in run
+    self._target(*self._args, **self._kwargs)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\anyio\from_thread.py", line 524, in run_blocking_portal
+    run_eventloop(
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\anyio\_core\_eventloop.py", line 75, in run
+    return async_backend.run(func, args, {}, backend_options)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\anyio\_backends\_asyncio.py", line 2365, in run
+    return runner.run(wrapper())
+  File "C:\Program Files\Python314\Lib\asyncio\runners.py", line 127, in run
+    return self._loop.run_until_complete(task)
+  File "C:\Program Files\Python314\Lib\asyncio\base_events.py", line 706, in run_until_complete
+    self.run_forever()
+  File "C:\Program Files\Python314\Lib\asyncio\base_events.py", line 677, in run_forever
+    self._run_once()
+  File "C:\Program Files\Python314\Lib\asyncio\base_events.py", line 2046, in _run_once
+    handle._run()
+  File "C:\Program Files\Python314\Lib\asyncio\events.py", line 94, in _run
+    self._context.run(self._callback, *self._args)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\anyio\from_thread.py", line 257, in _call_func
+    retval = await retval_or_awaitable
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\testclient.py", line 704, in lifespan
+    await self.app(scope, self.stream_receive.receive, self.stream_send.send)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\fastapi\applications.py", line 1135, in __call__
+    await super().__call__(scope, receive, send)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\applications.py", line 107, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\middleware\errors.py", line 151, in __call__
+    await self.app(scope, receive, send)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\middleware\cors.py", line 77, in __call__
+    await self.app(scope, receive, send)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\middleware\base.py", line 103, in __call__
+    await self.app(scope, receive, send)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\middleware\base.py", line 103, in __call__
+    await self.app(scope, receive, send)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\middleware\exceptions.py", line 49, in __call__
+    await self.app(scope, receive, send)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\fastapi\middleware\asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\routing.py", line 725, in app
+    await self.lifespan(scope, receive, send)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\routing.py", line 694, in lifespan
+    async with self.lifespan_context(app) as maybe_state:
+  File "C:\Program Files\Python314\Lib\contextlib.py", line 221, in __aexit__
+    await anext(self.gen)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\fastapi\routing.py", line 153, in merged_lifespan
+    async with original_context(app) as maybe_original_state:
+  File "C:\Program Files\Python314\Lib\contextlib.py", line 221, in __aexit__
+    await anext(self.gen)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\fastapi\routing.py", line 153, in merged_lifespan
+    async with original_context(app) as maybe_original_state:
+  File "C:\Program Files\Python314\Lib\contextlib.py", line 221, in __aexit__
+    await anext(self.gen)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\fastapi\routing.py", line 153, in merged_lifespan
+    async with original_context(app) as maybe_original_state:
+  File "C:\Program Files\Python314\Lib\contextlib.py", line 221, in __aexit__
+    await anext(self.gen)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\fastapi\routing.py", line 153, in merged_lifespan
+    async with original_context(app) as maybe_original_state:
+  File "C:\Program Files\Python314\Lib\contextlib.py", line 221, in __aexit__
+    await anext(self.gen)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\fastapi\routing.py", line 153, in merged_lifespan
+    async with original_context(app) as maybe_original_state:
+  File "C:\Program Files\Python314\Lib\contextlib.py", line 221, in __aexit__
+    await anext(self.gen)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\fastapi\routing.py", line 153, in merged_lifespan
+    async with original_context(app) as maybe_original_state:
+  File "C:\Program Files\Python314\Lib\contextlib.py", line 221, in __aexit__
+    await anext(self.gen)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\fastapi\routing.py", line 153, in merged_lifespan
+    async with original_context(app) as maybe_original_state:
+  File "C:\Program Files\Python314\Lib\contextlib.py", line 221, in __aexit__
+    await anext(self.gen)
+  File "C:\Users\manas\OneDrive\Desktop\LAOS\backend\main.py", line 50, in lifespan
+    logger.info("Shutting down LAOS server...")
+Message: 'Shutting down LAOS server...'
+Arguments: ()
+---------------------------- Captured log teardown ----------------------------
+INFO     main:main.py:50 Shutting down LAOS server...
+______________ test_admin_audit_logs_endpoint_filters_by_action _______________
+  + Exception Group Traceback (most recent call last):
+  |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\_utils.py", line 79, in collapse_excgroups
+  |     yield
+  |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\middleware\base.py", line 192, in __call__
+  |     async with anyio.create_task_group() as task_group:
+  |                ~~~~~~~~~~~~~~~~~~~~~~~^^
+  |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\anyio\_backends\_asyncio.py", line 783, in __aexit__
+  |     raise BaseExceptionGroup(
+  |         "unhandled errors in a TaskGroup", self._exceptions
+  |     ) from None
+  | ExceptionGroup: unhandled errors in a TaskGroup (1 sub-exception)
+  +-+---------------- 1 ----------------
+    | Traceback (most recent call last):
+    |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\_pytest\runner.py", line 353, in from_call
+    |     result: TResult | None = func()
+    |                              ~~~~^^
+    |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\_pytest\runner.py", line 245, in <lambda>
+    |     lambda: runtest_hook(item=item, **kwds),
+    |             ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+    |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\pluggy\_hooks.py", line 512, in __call__
+    |     return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+    |            ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\pluggy\_manager.py", line 120, in _hookexec
+    |     return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+    |            ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\pluggy\_callers.py", line 167, in _multicall
+    |     raise exception
+    |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\pluggy\_callers.py", line 139, in _multicall
+    |     teardown.throw(exception)
+    |     ~~~~~~~~~~~~~~^^^^^^^^^^^
+    |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\_pytest\logging.py", line 850, in pytest_runtest_call
+    |     yield
+    |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\pluggy\_callers.py", line 139, in _multicall
+    |     teardown.throw(exception)
+    |     ~~~~~~~~~~~~~~^^^^^^^^^^^
+    |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\_pytest\capture.py", line 900, in pytest_runtest_call
+    |     return (yield)
+    |             ^^^^^
+    |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\pluggy\_callers.py", line 139, in _multicall
+    |     teardown.throw(exception)
+    |     ~~~~~~~~~~~~~~^^^^^^^^^^^
+    |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\pluggy\_callers.py", line 53, in run_old_style_hookwrapper
+    |     return result.get_result()
+    |            ~~~~~~~~~~~~~~~~~^^
+    |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\pluggy\_result.py", line 103, in get_result
+    |     raise exc.with_traceback(tb)
+    |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\pluggy\_callers.py", line 38, in run_old_style_hookwrapper
+    |     res = yield
+    |           ^^^^^
+    |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\pluggy\_callers.py", line 139, in _multicall
+    |     teardown.throw(exception)
+    |     ~~~~~~~~~~~~~~^^^^^^^^^^^
+    |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\_pytest\skipping.py", line 268, in pytest_runtest_call
+    |     return (yield)
+    |             ^^^^^
+    |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\pluggy\_callers.py", line 121, in _multicall
+    |     res = hook_impl.function(*args)
+    |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\_pytest\runner.py", line 179, in pytest_runtest_call
+    |     item.runtest()
+    |     ~~~~~~~~~~~~^^
+    |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\_pytest\python.py", line 1720, in runtest
+    |     self.ihook.pytest_pyfunc_call(pyfuncitem=self)
+    |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+    |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\pluggy\_hooks.py", line 512, in __call__
+    |     return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+    |            ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\pluggy\_manager.py", line 120, in _hookexec
+    |     return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+    |            ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\pluggy\_callers.py", line 167, in _multicall
+    |     raise exception
+    |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\pluggy\_callers.py", line 139, in _multicall
+    |     teardown.throw(exception)
+    |     ~~~~~~~~~~~~~~^^^^^^^^^^^
+    |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\pluggy\_callers.py", line 53, in run_old_style_hookwrapper
+    |     return result.get_result()
+    |            ~~~~~~~~~~~~~~~~~^^
+    |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\pluggy\_result.py", line 103, in get_result
+    |     raise exc.with_traceback(tb)
+    |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\pluggy\_callers.py", line 38, in run_old_style_hookwrapper
+    |     res = yield
+    |           ^^^^^
+    |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\pluggy\_callers.py", line 121, in _multicall
+    |     res = hook_impl.function(*args)
+    |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\_pytest\python.py", line 166, in pytest_pyfunc_call
+    |     result = testfunction(**testargs)
+    |   File "C:\Users\manas\OneDrive\Desktop\LAOS\backend\tests\integration\test_admin_api.py", line 59, in test_admin_audit_logs_endpoint_filters_by_action
+    |     response = client.get("/api/v1/admin/audit-logs", params={"action": "UPLOAD"})
+    |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\testclient.py", line 473, in get
+    |     return super().get(
+    |            ~~~~~~~~~~~^
+    |         url,
+    |         ^^^^
+    |     ...<6 lines>...
+    |         extensions=extensions,
+    |         ^^^^^^^^^^^^^^^^^^^^^^
+    |     )
+    |     ^
+    |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\httpx\_client.py", line 1066, in get
+    |     return self.request(
+    |            ~~~~~~~~~~~~^
+    |         "GET",
+    |         ^^^^^^
+    |     ...<7 lines>...
+    |         extensions=extensions,
+    |         ^^^^^^^^^^^^^^^^^^^^^^
+    |     )
+    |     ^
+    |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\testclient.py", line 445, in request
+    |     return super().request(
+    |            ~~~~~~~~~~~~~~~^
+    |         method,
+    |         ^^^^^^^
+    |     ...<11 lines>...
+    |         extensions=extensions,
+    |         ^^^^^^^^^^^^^^^^^^^^^^
+    |     )
+    |     ^
+    |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\httpx\_client.py", line 837, in request
+    |     return self.send(request, auth=auth, follow_redirects=follow_redirects)
+    |            ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\httpx\_client.py", line 926, in send
+    |     response = self._send_handling_auth(
+    |         request,
+    |     ...<2 lines>...
+    |         history=[],
+    |     )
+    |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\httpx\_client.py", line 954, in _send_handling_auth
+    |     response = self._send_handling_redirects(
+    |         request,
+    |         follow_redirects=follow_redirects,
+    |         history=history,
+    |     )
+    |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\httpx\_client.py", line 991, in _send_handling_redirects
+    |     response = self._send_single_request(request)
+    |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\httpx\_client.py", line 1027, in _send_single_request
+    |     response = transport.handle_request(request)
+    |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\testclient.py", line 348, in handle_request
+    |     raise exc
+    |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\testclient.py", line 345, in handle_request
+    |     portal.call(self.app, scope, receive, send)
+    |     ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\anyio\from_thread.py", line 326, in call
+    |     return cast(T_Retval, self.start_task_soon(func, *args).result())
+    |                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+    |   File "C:\Program Files\Python314\Lib\concurrent\futures\_base.py", line 450, in result
+    |     return self.__get_result()
+    |            ~~~~~~~~~~~~~~~~~^^
+    |   File "C:\Program Files\Python314\Lib\concurrent\futures\_base.py", line 395, in __get_result
+    |     raise self._exception
+    |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\anyio\from_thread.py", line 257, in _call_func
+    |     retval = await retval_or_awaitable
+    |              ^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\fastapi\applications.py", line 1135, in __call__
+    |     await super().__call__(scope, receive, send)
+    |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\applications.py", line 107, in __call__
+    |     await self.middleware_stack(scope, receive, send)
+    |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\middleware\errors.py", line 186, in __call__
+    |     raise exc
+    |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\middleware\errors.py", line 164, in __call__
+    |     await self.app(scope, receive, _send)
+    |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\middleware\cors.py", line 85, in __call__
+    |     await self.app(scope, receive, send)
+    |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\middleware\base.py", line 191, in __call__
+    |     with recv_stream, send_stream, collapse_excgroups():
+    |                                    ~~~~~~~~~~~~~~~~~~^^
+    |   File "C:\Program Files\Python314\Lib\contextlib.py", line 162, in __exit__
+    |     self.gen.throw(value)
+    |     ~~~~~~~~~~~~~~^^^^^^^
+    |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\_utils.py", line 85, in collapse_excgroups
+    |     raise exc
+    |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\middleware\base.py", line 193, in __call__
+    |     response = await self.dispatch_func(request, call_next)
+    |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "C:\Users\manas\OneDrive\Desktop\LAOS\backend\app\api\middleware\auth.py", line 58, in dispatch
+    |     await self._apply_rate_limit(request)
+    |   File "C:\Users\manas\OneDrive\Desktop\LAOS\backend\app\api\middleware\auth.py", line 87, in _apply_rate_limit
+    |     minute_count = await redis_client.incr(minute_key)
+    |                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\redis\asyncio\client.py", line 611, in execute_command
+    |     conn = self.connection or await pool.get_connection(command_name, **options)
+    |                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\redis\asyncio\connection.py", line 1064, in get_connection
+    |     await self.ensure_connection(connection)
+    |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\redis\asyncio\connection.py", line 1097, in ensure_connection
+    |     await connection.connect()
+    |   File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\redis\asyncio\connection.py", line 289, in connect
+    |     raise ConnectionError(self._error_message(e))
+    | redis.exceptions.ConnectionError: Error 22 connecting to localhost:6379. The remote computer refused the network connection.
+    +------------------------------------
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\manas\OneDrive\Desktop\LAOS\backend\tests\integration\test_admin_api.py", line 59, in test_admin_audit_logs_endpoint_filters_by_action
+    response = client.get("/api/v1/admin/audit-logs", params={"action": "UPLOAD"})
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\testclient.py", line 473, in get
+    return super().get(
+           ~~~~~~~~~~~^
+        url,
+        ^^^^
+    ...<6 lines>...
+        extensions=extensions,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\httpx\_client.py", line 1066, in get
+    return self.request(
+           ~~~~~~~~~~~~^
+        "GET",
+        ^^^^^^
+    ...<7 lines>...
+        extensions=extensions,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\testclient.py", line 445, in request
+    return super().request(
+           ~~~~~~~~~~~~~~~^
+        method,
+        ^^^^^^^
+    ...<11 lines>...
+        extensions=extensions,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\httpx\_client.py", line 837, in request
+    return self.send(request, auth=auth, follow_redirects=follow_redirects)
+           ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\httpx\_client.py", line 926, in send
+    response = self._send_handling_auth(
+        request,
+    ...<2 lines>...
+        history=[],
+    )
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\httpx\_client.py", line 954, in _send_handling_auth
+    response = self._send_handling_redirects(
+        request,
+        follow_redirects=follow_redirects,
+        history=history,
+    )
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\httpx\_client.py", line 991, in _send_handling_redirects
+    response = self._send_single_request(request)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\httpx\_client.py", line 1027, in _send_single_request
+    response = transport.handle_request(request)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\testclient.py", line 348, in handle_request
+    raise exc
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\testclient.py", line 345, in handle_request
+    portal.call(self.app, scope, receive, send)
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\anyio\from_thread.py", line 326, in call
+    return cast(T_Retval, self.start_task_soon(func, *args).result())
+                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Program Files\Python314\Lib\concurrent\futures\_base.py", line 450, in result
+    return self.__get_result()
+           ~~~~~~~~~~~~~~~~~^^
+  File "C:\Program Files\Python314\Lib\concurrent\futures\_base.py", line 395, in __get_result
+    raise self._exception
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\anyio\from_thread.py", line 257, in _call_func
+    retval = await retval_or_awaitable
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\fastapi\applications.py", line 1135, in __call__
+    await super().__call__(scope, receive, send)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\applications.py", line 107, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\middleware\errors.py", line 186, in __call__
+    raise exc
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\middleware\errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\middleware\cors.py", line 85, in __call__
+    await self.app(scope, receive, send)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\middleware\base.py", line 191, in __call__
+    with recv_stream, send_stream, collapse_excgroups():
+                                   ~~~~~~~~~~~~~~~~~~^^
+  File "C:\Program Files\Python314\Lib\contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\_utils.py", line 85, in collapse_excgroups
+    raise exc
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\middleware\base.py", line 193, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\manas\OneDrive\Desktop\LAOS\backend\app\api\middleware\auth.py", line 58, in dispatch
+    await self._apply_rate_limit(request)
+  File "C:\Users\manas\OneDrive\Desktop\LAOS\backend\app\api\middleware\auth.py", line 87, in _apply_rate_limit
+    minute_count = await redis_client.incr(minute_key)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\redis\asyncio\client.py", line 611, in execute_command
+    conn = self.connection or await pool.get_connection(command_name, **options)
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\redis\asyncio\connection.py", line 1064, in get_connection
+    await self.ensure_connection(connection)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\redis\asyncio\connection.py", line 1097, in ensure_connection
+    await connection.connect()
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\redis\asyncio\connection.py", line 289, in connect
+    raise ConnectionError(self._error_message(e))
+redis.exceptions.ConnectionError: Error 22 connecting to localhost:6379. The remote computer refused the network connection.
+
+During handling of the above exception, another exception occurred:
+
+client = <starlette.testclient.TestClient object at 0x000001FD1AFCA350>
+
+    def test_admin_audit_logs_endpoint_filters_by_action(client):
+>       response = client.get("/api/v1/admin/audit-logs", params={"action": "UPLOAD"})
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\integration\test_admin_api.py:59: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+..\..\..\..\AppData\Roaming\Python\Python314\site-packages\starlette\testclient.py:473: in get
+    return super().get(
+..\..\..\..\AppData\Roaming\Python\Python314\site-packages\httpx\_client.py:1066: in get
+    return self.request(
+..\..\..\..\AppData\Roaming\Python\Python314\site-packages\starlette\testclient.py:445: in request
+    return super().request(
+..\..\..\..\AppData\Roaming\Python\Python314\site-packages\httpx\_client.py:837: in request
+    return self.send(request, auth=auth, follow_redirects=follow_redirects)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\..\..\AppData\Roaming\Python\Python314\site-packages\httpx\_client.py:926: in send
+    response = self._send_handling_auth(
+..\..\..\..\AppData\Roaming\Python\Python314\site-packages\httpx\_client.py:954: in _send_handling_auth
+    response = self._send_handling_redirects(
+..\..\..\..\AppData\Roaming\Python\Python314\site-packages\httpx\_client.py:991: in _send_handling_redirects
+    response = self._send_single_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\..\..\AppData\Roaming\Python\Python314\site-packages\httpx\_client.py:1027: in _send_single_request
+    response = transport.handle_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\..\..\AppData\Roaming\Python\Python314\site-packages\starlette\testclient.py:348: in handle_request
+    raise exc
+..\..\..\..\AppData\Roaming\Python\Python314\site-packages\starlette\testclient.py:345: in handle_request
+    portal.call(self.app, scope, receive, send)
+..\..\..\..\AppData\Roaming\Python\Python314\site-packages\anyio\from_thread.py:326: in call
+    return cast(T_Retval, self.start_task_soon(func, *args).result())
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Program Files\Python314\Lib\concurrent\futures\_base.py:450: in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+C:\Program Files\Python314\Lib\concurrent\futures\_base.py:395: in __get_result
+    raise self._exception
+..\..\..\..\AppData\Roaming\Python\Python314\site-packages\anyio\from_thread.py:257: in _call_func
+    retval = await retval_or_awaitable
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\..\..\AppData\Roaming\Python\Python314\site-packages\fastapi\applications.py:1135: in __call__
+    await super().__call__(scope, receive, send)
+..\..\..\..\AppData\Roaming\Python\Python314\site-packages\starlette\applications.py:107: in __call__
+    await self.middleware_stack(scope, receive, send)
+..\..\..\..\AppData\Roaming\Python\Python314\site-packages\starlette\middleware\errors.py:186: in __call__
+    raise exc
+..\..\..\..\AppData\Roaming\Python\Python314\site-packages\starlette\middleware\errors.py:164: in __call__
+    await self.app(scope, receive, _send)
+..\..\..\..\AppData\Roaming\Python\Python314\site-packages\starlette\middleware\cors.py:85: in __call__
+    await self.app(scope, receive, send)
+..\..\..\..\AppData\Roaming\Python\Python314\site-packages\starlette\middleware\base.py:191: in __call__
+    with recv_stream, send_stream, collapse_excgroups():
+                                   ^^^^^^^^^^^^^^^^^^^^
+C:\Program Files\Python314\Lib\contextlib.py:162: in __exit__
+    self.gen.throw(value)
+..\..\..\..\AppData\Roaming\Python\Python314\site-packages\starlette\_utils.py:85: in collapse_excgroups
+    raise exc
+..\..\..\..\AppData\Roaming\Python\Python314\site-packages\starlette\middleware\base.py:193: in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app\api\middleware\auth.py:58: in dispatch
+    await self._apply_rate_limit(request)
+app\api\middleware\auth.py:87: in _apply_rate_limit
+    minute_count = await redis_client.incr(minute_key)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\..\..\AppData\Roaming\Python\Python314\site-packages\redis\asyncio\client.py:611: in execute_command
+    conn = self.connection or await pool.get_connection(command_name, **options)
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\..\..\AppData\Roaming\Python\Python314\site-packages\redis\asyncio\connection.py:1064: in get_connection
+    await self.ensure_connection(connection)
+..\..\..\..\AppData\Roaming\Python\Python314\site-packages\redis\asyncio\connection.py:1097: in ensure_connection
+    await connection.connect()
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <redis.asyncio.connection.Connection(host=localhost,port=6379,db=0)>
+
+    async def connect(self):
+        """Connects to the Redis server if not already connected"""
+        if self.is_connected:
+            return
+        try:
+            await self.retry.call_with_retry(
+                lambda: self._connect(), lambda error: self.disconnect()
+            )
+        except asyncio.CancelledError:
+            raise  # in 3.7 and earlier, this is an Exception, not BaseException
+        except (socket.timeout, asyncio.TimeoutError):
+            raise TimeoutError("Timeout connecting to server")
+        except OSError as e:
+>           raise ConnectionError(self._error_message(e))
+E           redis.exceptions.ConnectionError: Error 22 connecting to localhost:6379. The remote computer refused the network connection.
+
+..\..\..\..\AppData\Roaming\Python\Python314\site-packages\redis\asyncio\connection.py:289: ConnectionError
+---------------------------- Captured stderr setup ----------------------------
+--- Logging error ---
+Traceback (most recent call last):
+  File "C:\Program Files\Python314\Lib\logging\__init__.py", line 472, in format
+    return self._format(record)
+           ~~~~~~~~~~~~^^^^^^^^
+  File "C:\Program Files\Python314\Lib\logging\__init__.py", line 468, in _format
+    return self._fmt % values
+           ~~~~~~~~~~^~~~~~~~
+KeyError: 'request_id'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Program Files\Python314\Lib\logging\__init__.py", line 1151, in emit
+    msg = self.format(record)
+  File "C:\Program Files\Python314\Lib\logging\__init__.py", line 999, in format
+    return fmt.format(record)
+           ~~~~~~~~~~^^^^^^^^
+  File "C:\Program Files\Python314\Lib\logging\__init__.py", line 715, in format
+    s = self.formatMessage(record)
+  File "C:\Program Files\Python314\Lib\logging\__init__.py", line 684, in formatMessage
+    return self._style.format(record)
+           ~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "C:\Program Files\Python314\Lib\logging\__init__.py", line 474, in format
+    raise ValueError('Formatting field not found in record: %s' % e)
+ValueError: Formatting field not found in record: 'request_id'
+Call stack:
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\pytest\__main__.py", line 9, in <module>
+    raise SystemExit(pytest.console_main())
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\_pytest\config\__init__.py", line 223, in console_main
+    code = main()
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\_pytest\config\__init__.py", line 199, in main
+    ret: ExitCode | int = config.hook.pytest_cmdline_main(config=config)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\pluggy\_hooks.py", line 512, in __call__
+    return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\pluggy\_manager.py", line 120, in _hookexec
+    return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\pluggy\_callers.py", line 121, in _multicall
+    res = hook_impl.function(*args)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\_pytest\main.py", line 365, in pytest_cmdline_main
+    return wrap_session(config, _main)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\_pytest\main.py", line 318, in wrap_session
+    session.exitstatus = doit(config, session) or 0
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\_pytest\main.py", line 372, in _main
+    config.hook.pytest_runtestloop(session=session)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\pluggy\_hooks.py", line 512, in __call__
+    return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\pluggy\_manager.py", line 120, in _hookexec
+    return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\pluggy\_callers.py", line 121, in _multicall
+    res = hook_impl.function(*args)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\_pytest\main.py", line 396, in pytest_runtestloop
+    item.config.hook.pytest_runtest_protocol(item=item, nextitem=nextitem)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\pluggy\_hooks.py", line 512, in __call__
+    return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\pluggy\_manager.py", line 120, in _hookexec
+    return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\pluggy\_callers.py", line 121, in _multicall
+    res = hook_impl.function(*args)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\_pytest\runner.py", line 118, in pytest_runtest_protocol
+    runtestprotocol(item, nextitem=nextitem)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\_pytest\runner.py", line 131, in runtestprotocol
+    rep = call_and_report(item, "setup", log)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\_pytest\runner.py", line 244, in call_and_report
+    call = CallInfo.from_call(
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\_pytest\runner.py", line 353, in from_call
+    result: TResult | None = func()
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\_pytest\runner.py", line 245, in <lambda>
+    lambda: runtest_hook(item=item, **kwds),
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\pluggy\_hooks.py", line 512, in __call__
+    return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\pluggy\_manager.py", line 120, in _hookexec
+    return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\pluggy\_callers.py", line 121, in _multicall
+    res = hook_impl.function(*args)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\_pytest\runner.py", line 165, in pytest_runtest_setup
+    item.session._setupstate.setup(item)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\_pytest\runner.py", line 523, in setup
+    col.setup()
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\_pytest\python.py", line 1723, in setup
+    self._request._fillfixtures()
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\_pytest\fixtures.py", line 707, in _fillfixtures
+    item.funcargs[argname] = self.getfixturevalue(argname)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\_pytest\fixtures.py", line 539, in getfixturevalue
+    fixturedef = self._get_active_fixturedef(argname)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\_pytest\fixtures.py", line 627, in _get_active_fixturedef
+    fixturedef.execute(request=subrequest)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\_pytest\fixtures.py", line 1110, in execute
+    result: FixtureValue = ihook.pytest_fixture_setup(
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\pluggy\_hooks.py", line 512, in __call__
+    return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\pluggy\_manager.py", line 120, in _hookexec
+    return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\pluggy\_callers.py", line 121, in _multicall
+    res = hook_impl.function(*args)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\_pytest\fixtures.py", line 1202, in pytest_fixture_setup
+    result = call_fixture_func(fixturefunc, request, kwargs)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\_pytest\fixtures.py", line 908, in call_fixture_func
+    fixture_result = next(generator)
+  File "C:\Users\manas\OneDrive\Desktop\LAOS\backend\tests\integration\test_admin_api.py", line 35, in client
+    app = create_app()
+  File "C:\Users\manas\OneDrive\Desktop\LAOS\backend\main.py", line 137, in create_app
+    logger.info("FastAPI application initialized successfully")
+Message: 'FastAPI application initialized successfully'
+Arguments: ()
+--- Logging error ---
+Traceback (most recent call last):
+  File "C:\Program Files\Python314\Lib\logging\__init__.py", line 472, in format
+    return self._format(record)
+           ~~~~~~~~~~~~^^^^^^^^
+  File "C:\Program Files\Python314\Lib\logging\__init__.py", line 468, in _format
+    return self._fmt % values
+           ~~~~~~~~~~^~~~~~~~
+KeyError: 'request_id'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Program Files\Python314\Lib\logging\__init__.py", line 1151, in emit
+    msg = self.format(record)
+  File "C:\Program Files\Python314\Lib\logging\__init__.py", line 999, in format
+    return fmt.format(record)
+           ~~~~~~~~~~^^^^^^^^
+  File "C:\Program Files\Python314\Lib\logging\__init__.py", line 715, in format
+    s = self.formatMessage(record)
+  File "C:\Program Files\Python314\Lib\logging\__init__.py", line 684, in formatMessage
+    return self._style.format(record)
+           ~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "C:\Program Files\Python314\Lib\logging\__init__.py", line 474, in format
+    raise ValueError('Formatting field not found in record: %s' % e)
+ValueError: Formatting field not found in record: 'request_id'
+Call stack:
+  File "C:\Program Files\Python314\Lib\threading.py", line 1043, in _bootstrap
+    self._bootstrap_inner()
+  File "C:\Program Files\Python314\Lib\threading.py", line 1081, in _bootstrap_inner
+    self._context.run(self.run)
+  File "C:\Program Files\Python314\Lib\threading.py", line 1023, in run
+    self._target(*self._args, **self._kwargs)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\anyio\from_thread.py", line 524, in run_blocking_portal
+    run_eventloop(
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\anyio\_core\_eventloop.py", line 75, in run
+    return async_backend.run(func, args, {}, backend_options)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\anyio\_backends\_asyncio.py", line 2364, in run
+    with Runner(debug=debug, loop_factory=loop_factory) as runner:
+  File "C:\Program Files\Python314\Lib\asyncio\runners.py", line 59, in __enter__
+    self._lazy_init()
+  File "C:\Program Files\Python314\Lib\asyncio\runners.py", line 146, in _lazy_init
+    self._loop = events.new_event_loop()
+  File "C:\Program Files\Python314\Lib\asyncio\events.py", line 844, in new_event_loop
+    return _get_event_loop_policy().new_event_loop()
+  File "C:\Program Files\Python314\Lib\asyncio\events.py", line 732, in new_event_loop
+    return self._loop_factory()
+  File "C:\Program Files\Python314\Lib\asyncio\windows_events.py", line 316, in __init__
+    super().__init__(proactor)
+  File "C:\Program Files\Python314\Lib\asyncio\proactor_events.py", line 631, in __init__
+    logger.debug('Using proactor: %s', proactor.__class__.__name__)
+Message: 'Using proactor: %s'
+Arguments: ('IocpProactor',)
+--- Logging error ---
+Traceback (most recent call last):
+  File "C:\Program Files\Python314\Lib\logging\__init__.py", line 472, in format
+    return self._format(record)
+           ~~~~~~~~~~~~^^^^^^^^
+  File "C:\Program Files\Python314\Lib\logging\__init__.py", line 468, in _format
+    return self._fmt % values
+           ~~~~~~~~~~^~~~~~~~
+KeyError: 'request_id'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Program Files\Python314\Lib\logging\__init__.py", line 1151, in emit
+    msg = self.format(record)
+  File "C:\Program Files\Python314\Lib\logging\__init__.py", line 999, in format
+    return fmt.format(record)
+           ~~~~~~~~~~^^^^^^^^
+  File "C:\Program Files\Python314\Lib\logging\__init__.py", line 715, in format
+    s = self.formatMessage(record)
+  File "C:\Program Files\Python314\Lib\logging\__init__.py", line 684, in formatMessage
+    return self._style.format(record)
+           ~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "C:\Program Files\Python314\Lib\logging\__init__.py", line 474, in format
+    raise ValueError('Formatting field not found in record: %s' % e)
+ValueError: Formatting field not found in record: 'request_id'
+Call stack:
+  File "C:\Program Files\Python314\Lib\threading.py", line 1043, in _bootstrap
+    self._bootstrap_inner()
+  File "C:\Program Files\Python314\Lib\threading.py", line 1081, in _bootstrap_inner
+    self._context.run(self.run)
+  File "C:\Program Files\Python314\Lib\threading.py", line 1023, in run
+    self._target(*self._args, **self._kwargs)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\anyio\from_thread.py", line 524, in run_blocking_portal
+    run_eventloop(
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\anyio\_core\_eventloop.py", line 75, in run
+    return async_backend.run(func, args, {}, backend_options)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\anyio\_backends\_asyncio.py", line 2365, in run
+    return runner.run(wrapper())
+  File "C:\Program Files\Python314\Lib\asyncio\runners.py", line 127, in run
+    return self._loop.run_until_complete(task)
+  File "C:\Program Files\Python314\Lib\asyncio\base_events.py", line 706, in run_until_complete
+    self.run_forever()
+  File "C:\Program Files\Python314\Lib\asyncio\base_events.py", line 677, in run_forever
+    self._run_once()
+  File "C:\Program Files\Python314\Lib\asyncio\base_events.py", line 2046, in _run_once
+    handle._run()
+  File "C:\Program Files\Python314\Lib\asyncio\events.py", line 94, in _run
+    self._context.run(self._callback, *self._args)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\anyio\from_thread.py", line 257, in _call_func
+    retval = await retval_or_awaitable
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\testclient.py", line 704, in lifespan
+    await self.app(scope, self.stream_receive.receive, self.stream_send.send)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\fastapi\applications.py", line 1135, in __call__
+    await super().__call__(scope, receive, send)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\applications.py", line 107, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\middleware\errors.py", line 151, in __call__
+    await self.app(scope, receive, send)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\middleware\cors.py", line 77, in __call__
+    await self.app(scope, receive, send)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\middleware\base.py", line 103, in __call__
+    await self.app(scope, receive, send)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\middleware\base.py", line 103, in __call__
+    await self.app(scope, receive, send)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\middleware\exceptions.py", line 49, in __call__
+    await self.app(scope, receive, send)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\fastapi\middleware\asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\routing.py", line 725, in app
+    await self.lifespan(scope, receive, send)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\routing.py", line 694, in lifespan
+    async with self.lifespan_context(app) as maybe_state:
+  File "C:\Program Files\Python314\Lib\contextlib.py", line 214, in __aenter__
+    return await anext(self.gen)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\fastapi\routing.py", line 153, in merged_lifespan
+    async with original_context(app) as maybe_original_state:
+  File "C:\Program Files\Python314\Lib\contextlib.py", line 214, in __aenter__
+    return await anext(self.gen)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\fastapi\routing.py", line 153, in merged_lifespan
+    async with original_context(app) as maybe_original_state:
+  File "C:\Program Files\Python314\Lib\contextlib.py", line 214, in __aenter__
+    return await anext(self.gen)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\fastapi\routing.py", line 153, in merged_lifespan
+    async with original_context(app) as maybe_original_state:
+  File "C:\Program Files\Python314\Lib\contextlib.py", line 214, in __aenter__
+    return await anext(self.gen)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\fastapi\routing.py", line 153, in merged_lifespan
+    async with original_context(app) as maybe_original_state:
+  File "C:\Program Files\Python314\Lib\contextlib.py", line 214, in __aenter__
+    return await anext(self.gen)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\fastapi\routing.py", line 153, in merged_lifespan
+    async with original_context(app) as maybe_original_state:
+  File "C:\Program Files\Python314\Lib\contextlib.py", line 214, in __aenter__
+    return await anext(self.gen)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\fastapi\routing.py", line 153, in merged_lifespan
+    async with original_context(app) as maybe_original_state:
+  File "C:\Program Files\Python314\Lib\contextlib.py", line 214, in __aenter__
+    return await anext(self.gen)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\fastapi\routing.py", line 153, in merged_lifespan
+    async with original_context(app) as maybe_original_state:
+  File "C:\Program Files\Python314\Lib\contextlib.py", line 214, in __aenter__
+    return await anext(self.gen)
+  File "C:\Users\manas\OneDrive\Desktop\LAOS\backend\main.py", line 40, in lifespan
+    logger.info("Starting up LAOS server...")
+Message: 'Starting up LAOS server...'
+Arguments: ()
+--- Logging error ---
+Traceback (most recent call last):
+  File "C:\Program Files\Python314\Lib\logging\__init__.py", line 472, in format
+    return self._format(record)
+           ~~~~~~~~~~~~^^^^^^^^
+  File "C:\Program Files\Python314\Lib\logging\__init__.py", line 468, in _format
+    return self._fmt % values
+           ~~~~~~~~~~^~~~~~~~
+KeyError: 'request_id'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Program Files\Python314\Lib\logging\__init__.py", line 1151, in emit
+    msg = self.format(record)
+  File "C:\Program Files\Python314\Lib\logging\__init__.py", line 999, in format
+    return fmt.format(record)
+           ~~~~~~~~~~^^^^^^^^
+  File "C:\Program Files\Python314\Lib\logging\__init__.py", line 715, in format
+    s = self.formatMessage(record)
+  File "C:\Program Files\Python314\Lib\logging\__init__.py", line 684, in formatMessage
+    return self._style.format(record)
+           ~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "C:\Program Files\Python314\Lib\logging\__init__.py", line 474, in format
+    raise ValueError('Formatting field not found in record: %s' % e)
+ValueError: Formatting field not found in record: 'request_id'
+Call stack:
+  File "C:\Program Files\Python314\Lib\threading.py", line 1043, in _bootstrap
+    self._bootstrap_inner()
+  File "C:\Program Files\Python314\Lib\threading.py", line 1081, in _bootstrap_inner
+    self._context.run(self.run)
+  File "C:\Program Files\Python314\Lib\threading.py", line 1023, in run
+    self._target(*self._args, **self._kwargs)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\anyio\from_thread.py", line 524, in run_blocking_portal
+    run_eventloop(
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\anyio\_core\_eventloop.py", line 75, in run
+    return async_backend.run(func, args, {}, backend_options)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\anyio\_backends\_asyncio.py", line 2365, in run
+    return runner.run(wrapper())
+  File "C:\Program Files\Python314\Lib\asyncio\runners.py", line 127, in run
+    return self._loop.run_until_complete(task)
+  File "C:\Program Files\Python314\Lib\asyncio\base_events.py", line 706, in run_until_complete
+    self.run_forever()
+  File "C:\Program Files\Python314\Lib\asyncio\base_events.py", line 677, in run_forever
+    self._run_once()
+  File "C:\Program Files\Python314\Lib\asyncio\base_events.py", line 2046, in _run_once
+    handle._run()
+  File "C:\Program Files\Python314\Lib\asyncio\events.py", line 94, in _run
+    self._context.run(self._callback, *self._args)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\anyio\from_thread.py", line 257, in _call_func
+    retval = await retval_or_awaitable
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\testclient.py", line 704, in lifespan
+    await self.app(scope, self.stream_receive.receive, self.stream_send.send)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\fastapi\applications.py", line 1135, in __call__
+    await super().__call__(scope, receive, send)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\applications.py", line 107, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\middleware\errors.py", line 151, in __call__
+    await self.app(scope, receive, send)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\middleware\cors.py", line 77, in __call__
+    await self.app(scope, receive, send)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\middleware\base.py", line 103, in __call__
+    await self.app(scope, receive, send)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\middleware\base.py", line 103, in __call__
+    await self.app(scope, receive, send)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\middleware\exceptions.py", line 49, in __call__
+    await self.app(scope, receive, send)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\fastapi\middleware\asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\routing.py", line 725, in app
+    await self.lifespan(scope, receive, send)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\routing.py", line 694, in lifespan
+    async with self.lifespan_context(app) as maybe_state:
+  File "C:\Program Files\Python314\Lib\contextlib.py", line 214, in __aenter__
+    return await anext(self.gen)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\fastapi\routing.py", line 153, in merged_lifespan
+    async with original_context(app) as maybe_original_state:
+  File "C:\Program Files\Python314\Lib\contextlib.py", line 214, in __aenter__
+    return await anext(self.gen)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\fastapi\routing.py", line 153, in merged_lifespan
+    async with original_context(app) as maybe_original_state:
+  File "C:\Program Files\Python314\Lib\contextlib.py", line 214, in __aenter__
+    return await anext(self.gen)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\fastapi\routing.py", line 153, in merged_lifespan
+    async with original_context(app) as maybe_original_state:
+  File "C:\Program Files\Python314\Lib\contextlib.py", line 214, in __aenter__
+    return await anext(self.gen)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\fastapi\routing.py", line 153, in merged_lifespan
+    async with original_context(app) as maybe_original_state:
+  File "C:\Program Files\Python314\Lib\contextlib.py", line 214, in __aenter__
+    return await anext(self.gen)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\fastapi\routing.py", line 153, in merged_lifespan
+    async with original_context(app) as maybe_original_state:
+  File "C:\Program Files\Python314\Lib\contextlib.py", line 214, in __aenter__
+    return await anext(self.gen)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\fastapi\routing.py", line 153, in merged_lifespan
+    async with original_context(app) as maybe_original_state:
+  File "C:\Program Files\Python314\Lib\contextlib.py", line 214, in __aenter__
+    return await anext(self.gen)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\fastapi\routing.py", line 153, in merged_lifespan
+    async with original_context(app) as maybe_original_state:
+  File "C:\Program Files\Python314\Lib\contextlib.py", line 214, in __aenter__
+    return await anext(self.gen)
+  File "C:\Users\manas\OneDrive\Desktop\LAOS\backend\main.py", line 41, in lifespan
+    logger.info_context(
+  File "C:\Users\manas\OneDrive\Desktop\LAOS\backend\app\core\logging.py", line 198, in info_context
+    self.log_context(logging.INFO, msg, **kwargs)
+  File "C:\Users\manas\OneDrive\Desktop\LAOS\backend\app\core\logging.py", line 190, in log_context
+    self.log(level, msg, extra=extra)
+Message: 'Environment: development'
+Arguments: ()
+-------------------------- Captured stderr teardown ---------------------------
+--- Logging error ---
+Traceback (most recent call last):
+  File "C:\Program Files\Python314\Lib\logging\__init__.py", line 472, in format
+    return self._format(record)
+           ~~~~~~~~~~~~^^^^^^^^
+  File "C:\Program Files\Python314\Lib\logging\__init__.py", line 468, in _format
+    return self._fmt % values
+           ~~~~~~~~~~^~~~~~~~
+KeyError: 'request_id'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Program Files\Python314\Lib\logging\__init__.py", line 1151, in emit
+    msg = self.format(record)
+  File "C:\Program Files\Python314\Lib\logging\__init__.py", line 999, in format
+    return fmt.format(record)
+           ~~~~~~~~~~^^^^^^^^
+  File "C:\Program Files\Python314\Lib\logging\__init__.py", line 715, in format
+    s = self.formatMessage(record)
+  File "C:\Program Files\Python314\Lib\logging\__init__.py", line 684, in formatMessage
+    return self._style.format(record)
+           ~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "C:\Program Files\Python314\Lib\logging\__init__.py", line 474, in format
+    raise ValueError('Formatting field not found in record: %s' % e)
+ValueError: Formatting field not found in record: 'request_id'
+Call stack:
+  File "C:\Program Files\Python314\Lib\threading.py", line 1043, in _bootstrap
+    self._bootstrap_inner()
+  File "C:\Program Files\Python314\Lib\threading.py", line 1081, in _bootstrap_inner
+    self._context.run(self.run)
+  File "C:\Program Files\Python314\Lib\threading.py", line 1023, in run
+    self._target(*self._args, **self._kwargs)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\anyio\from_thread.py", line 524, in run_blocking_portal
+    run_eventloop(
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\anyio\_core\_eventloop.py", line 75, in run
+    return async_backend.run(func, args, {}, backend_options)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\anyio\_backends\_asyncio.py", line 2365, in run
+    return runner.run(wrapper())
+  File "C:\Program Files\Python314\Lib\asyncio\runners.py", line 127, in run
+    return self._loop.run_until_complete(task)
+  File "C:\Program Files\Python314\Lib\asyncio\base_events.py", line 706, in run_until_complete
+    self.run_forever()
+  File "C:\Program Files\Python314\Lib\asyncio\base_events.py", line 677, in run_forever
+    self._run_once()
+  File "C:\Program Files\Python314\Lib\asyncio\base_events.py", line 2046, in _run_once
+    handle._run()
+  File "C:\Program Files\Python314\Lib\asyncio\events.py", line 94, in _run
+    self._context.run(self._callback, *self._args)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\anyio\from_thread.py", line 257, in _call_func
+    retval = await retval_or_awaitable
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\testclient.py", line 704, in lifespan
+    await self.app(scope, self.stream_receive.receive, self.stream_send.send)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\fastapi\applications.py", line 1135, in __call__
+    await super().__call__(scope, receive, send)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\applications.py", line 107, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\middleware\errors.py", line 151, in __call__
+    await self.app(scope, receive, send)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\middleware\cors.py", line 77, in __call__
+    await self.app(scope, receive, send)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\middleware\base.py", line 103, in __call__
+    await self.app(scope, receive, send)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\middleware\base.py", line 103, in __call__
+    await self.app(scope, receive, send)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\middleware\exceptions.py", line 49, in __call__
+    await self.app(scope, receive, send)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\fastapi\middleware\asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\routing.py", line 725, in app
+    await self.lifespan(scope, receive, send)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\starlette\routing.py", line 694, in lifespan
+    async with self.lifespan_context(app) as maybe_state:
+  File "C:\Program Files\Python314\Lib\contextlib.py", line 221, in __aexit__
+    await anext(self.gen)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\fastapi\routing.py", line 153, in merged_lifespan
+    async with original_context(app) as maybe_original_state:
+  File "C:\Program Files\Python314\Lib\contextlib.py", line 221, in __aexit__
+    await anext(self.gen)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\fastapi\routing.py", line 153, in merged_lifespan
+    async with original_context(app) as maybe_original_state:
+  File "C:\Program Files\Python314\Lib\contextlib.py", line 221, in __aexit__
+    await anext(self.gen)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\fastapi\routing.py", line 153, in merged_lifespan
+    async with original_context(app) as maybe_original_state:
+  File "C:\Program Files\Python314\Lib\contextlib.py", line 221, in __aexit__
+    await anext(self.gen)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\fastapi\routing.py", line 153, in merged_lifespan
+    async with original_context(app) as maybe_original_state:
+  File "C:\Program Files\Python314\Lib\contextlib.py", line 221, in __aexit__
+    await anext(self.gen)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\fastapi\routing.py", line 153, in merged_lifespan
+    async with original_context(app) as maybe_original_state:
+  File "C:\Program Files\Python314\Lib\contextlib.py", line 221, in __aexit__
+    await anext(self.gen)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\fastapi\routing.py", line 153, in merged_lifespan
+    async with original_context(app) as maybe_original_state:
+  File "C:\Program Files\Python314\Lib\contextlib.py", line 221, in __aexit__
+    await anext(self.gen)
+  File "C:\Users\manas\AppData\Roaming\Python\Python314\site-packages\fastapi\routing.py", line 153, in merged_lifespan
+    async with original_context(app) as maybe_original_state:
+  File "C:\Program Files\Python314\Lib\contextlib.py", line 221, in __aexit__
+    await anext(self.gen)
+  File "C:\Users\manas\OneDrive\Desktop\LAOS\backend\main.py", line 50, in lifespan
+    logger.info("Shutting down LAOS server...")
+Message: 'Shutting down LAOS server...'
+Arguments: ()
+---------------------------- Captured log teardown ----------------------------
+INFO     main:main.py:50 Shutting down LAOS server...
+=========================== short test summary info ===========================
+FAILED tests/integration/test_admin_api.py::test_admin_users_endpoint_returns_users
+FAILED tests/integration/test_admin_api.py::test_admin_audit_logs_endpoint_filters_by_action
+2 failed in 10.47s

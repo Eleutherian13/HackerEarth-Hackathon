@@ -1,0 +1,34 @@
+version: "3.9"
+
+services:
+  backend:
+    volumes:
+      - ./backend:/app
+    environment:
+      - ENVIRONMENT=development
+      - DEBUG=true
+      - LOG_LEVEL=DEBUG
+      - LOG_FORMAT=text
+    ports:
+      - "8000:8000"
+
+  worker:
+    volumes:
+      - ./worker:/app
+    environment:
+      - ENVIRONMENT=development
+      - DEBUG=true
+
+  frontend:
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+    command: npm run dev
+    ports:
+      - "3000:3000"
+
+  nginx:
+    profiles:
+      - production

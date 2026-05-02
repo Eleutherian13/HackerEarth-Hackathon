@@ -1,0 +1,105 @@
+{
+  "case_details": {
+    "case_number": {
+      "value": "ABC-123/2024",
+      "confidence": 0.98,
+      "source_quote": "Case Number: ABC-123/2024",
+      "page": 1
+    },
+    "case_title": {
+      "value": "State of Example v. Example Corp.",
+      "confidence": 0.96,
+      "source_quote": "State of Example v. Example Corp.",
+      "page": 1
+    },
+    "court_name": {
+      "value": "Supreme Court",
+      "confidence": 0.95,
+      "source_quote": "Supreme Court of Example State",
+      "page": 1
+    },
+    "judgment_date": {
+      "value": "25 March 2024",
+      "confidence": 0.95,
+      "source_quote": "Delivered on 25 March 2024",
+      "page": 1
+    },
+    "judge_bench": {
+      "value": "Justice Anita Example",
+      "confidence": 0.93,
+      "source_quote": "Coram: Justice Anita Example",
+      "page": 1
+    }
+  },
+  "parties": {
+    "petitioners": [
+      { "name": "State of Example", "confidence": 0.94 }
+    ],
+    "respondents": [
+      { "name": "Example Corp.", "confidence": 0.94 }
+    ],
+    "counsel": [
+      { "name": "Jane Lawyer", "party": "Petitioner", "confidence": 0.90 },
+      { "name": "John Advocate", "party": "Respondent", "confidence": 0.88 }
+    ]
+  },
+  "operative_directions": [
+    {
+      "direction_type": "MANDATORY_ORDER",
+      "description": "The respondent must pay the awarded costs within 30 days.",
+      "confidence": 0.95,
+      "source_quote": "The respondent is directed to pay the awarded costs within 30 days.",
+      "page": 12,
+      "deadline_days": 30,
+      "deadline_date": null,
+      "deadline_explicit": true,
+      "responsible_entity": "Respondent",
+      "compliance_indicator": "Cost order is enforceable",
+      "is_inferred": false,
+      "inference_rationale": null
+    }
+  ],
+  "deadlines": [
+    {
+      "description": "Payment of awarded costs.",
+      "due_date": null,
+      "timeframe": "30 days",
+      "is_explicit": true,
+      "confidence": 0.92,
+      "source_quote": "...within 30 days.",
+      "page": 12,
+      "is_inferred": false,
+      "inference_rationale": null
+    }
+  ],
+  "compliance_requirements": [
+    {
+      "requirement": "Pay awarded costs",
+      "action_needed": "Complete payment to the court registry",
+      "is_mandatory": true,
+      "confidence": 0.88,
+      "source_quote": "The respondent is directed to pay the awarded costs.",
+      "page": 12,
+      "is_inferred": false,
+      "inference_rationale": null
+    }
+  ],
+  "appeal_indicators": {
+    "is_appealable": true,
+    "appeal_forum": "Court of Appeal",
+    "limitation_period_days": 90,
+    "confidence": 0.86,
+    "source_quote": "An appeal may be filed with the Court of Appeal within ninety days.",
+    "page": 13,
+    "is_inferred": false,
+    "inference_rationale": null
+  },
+  "costs_and_penalties": {
+    "costs_awarded": true,
+    "amount": "INR 250,000",
+    "penalty_risk": "LOW",
+    "contempt_risk": "LOW",
+    "source_quote": "The award of costs is granted to the petitioner.",
+    "confidence": 0.90
+  }
+}

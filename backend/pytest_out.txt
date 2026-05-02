@@ -1,0 +1,8 @@
+.......                                                                  [100%]
+============================== warnings summary ===============================
+tests/unit/test_admin_endpoints.py::TestAdminEndpoints::test_update_user_changes_role_and_status
+  C:\Users\manas\OneDrive\Desktop\LAOS\backend\app\api\v1\endpoints\admin.py:161: PydanticDeprecatedSince20: The `from_orm` method is deprecated; set `model_config['from_attributes']=True` and use `model_validate` instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.12/migration/
+    return UserAdminEntry.from_orm(user)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+7 passed, 1 warning in 0.97s

@@ -1,0 +1,42 @@
+[
+  {
+    "item_type": "COMPLIANCE",
+    "title": "Submit compliance report within 14 days.",
+    "description": "Submit compliance report within 14 days.",
+    "priority": "HIGH",
+    "due_date": "2026-01-14",
+    "due_date_source": "INFERRED",
+    "responsible_department_name": null,
+    "risk_if_ignored": "Non-compliance may be treated as contempt of court.",
+    "suggested_next_step": "Assign the compliance obligation to the appropriate legal team.",
+    "source_evidence": {
+      "field_ids": ["field-1"],
+      "quotes": [
+        {
+          "text": "Submit compliance report",
+          "page": 2
+        }
+      ]
+    }
+  },
+  {
+    "item_type": "APPEAL_CONSIDERATION",
+    "title": "Consider filing appeal in the appellate forum.",
+    "description": "Consider filing appeal against the judgment order in the appellate forum.",
+    "priority": "HIGH",
+    "due_date": "2026-01-08",
+    "due_date_source": "ESTIMATED",
+    "responsible_department_name": null,
+    "risk_if_ignored": "Right of appeal may be lost if not filed within limitation period.",
+    "suggested_next_step": "Consider filing appeal in the appellate forum before the limitation date.",
+    "source_evidence": {
+      "field_ids": ["field-2"],
+      "quotes": [
+        {
+          "text": "Appealable via High Court; limitation period 15 days",
+          "page": 5
+        }
+      ]
+    }
+  }
+]
