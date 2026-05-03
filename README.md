@@ -58,7 +58,7 @@ All services will be ready in 2-3 minutes. Frontend and API are fully functional
 - **Database**: PostgreSQL 16 (relational data, JSONB)
 - **Cache/Messaging**: Redis 7 (caching, Celery broker)
 - **Task Queue**: Celery (async PDF processing, AI extraction)
-- **Document Processing**: 
+- **Document Processing**:
   - Tesseract OCR (text extraction)
   - Poppler (PDF parsing)
   - PaddleOCR (layout analysis)
