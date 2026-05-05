@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Scale } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -14,18 +14,10 @@ export default function Signup() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    // Check if user is already logged in
-    const token = localStorage.getItem("auth_token");
-    if (token) {
-      navigate("/", { replace: true });
-    }
-  }, [navigate]);
-
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (password.length < 8) {
-      return toast.error("Password must be at least 8 characters");
+    if (password.length < 12) {
+      return toast.error("Password must be at least 12 characters with upper, lower, digit, and special characters");
     }
     if (!fullName.trim()) {
       return toast.error("Full name is required");

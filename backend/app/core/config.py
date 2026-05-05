@@ -14,6 +14,7 @@ class Settings(BaseSettings):
 		env_file_encoding="utf-8",
 		case_sensitive=False,
 		arbitrary_types_allowed=True,
+		extra="ignore",
 	)
 
 	APP_NAME: str = "Court Judgment Action System"

@@ -72,7 +72,12 @@ class AuthMiddleware(BaseHTTPMiddleware):
         if settings.TESTING:
             return
 
-        redis_client = get_redis_client()
+        try:
+            redis_client = get_redis_client()
+        except Exception:
+            logger.warning("Redis unavailable, skipping rate limiting", exc_info=settings.DEBUG)
+            return
+
         context = getattr(request.state, "context", None)
         user_id = getattr(getattr(context, "user", None), "id", None)
         ip_address = request.client.host if request.client else "unknown"
@@ -84,18 +89,23 @@ class AuthMiddleware(BaseHTTPMiddleware):
         if user_id is not None:
             identifiers.append(f"user:{user_id}")
 
-        for identifier in identifiers:
-            minute_key = f"ratelimit:{identifier}:{current_minute}"
-            burst_key = f"ratelimit:burst:{identifier}:{current_second}"
-            minute_count = await redis_client.incr(minute_key)
-            if minute_count == 1:
-                await redis_client.expire(minute_key, 120)
-            burst_count = await redis_client.incr(burst_key)
-            if burst_count == 1:
-                await redis_client.expire(burst_key, 2)
+        try:
+            for identifier in identifiers:
+                minute_key = f"ratelimit:{identifier}:{current_minute}"
+                burst_key = f"ratelimit:burst:{identifier}:{current_second}"
+                minute_count = await redis_client.incr(minute_key)
+                if minute_count == 1:
+                    await redis_client.expire(minute_key, 120)
+                burst_count = await redis_client.incr(burst_key)
+                if burst_count == 1:
+                    await redis_client.expire(burst_key, 2)
 
-            if minute_count > settings.RATE_LIMIT_PER_MINUTE or burst_count > settings.RATE_LIMIT_BURST:
-                raise HTTPException(status_code=status.HTTP_429_TOO_MANY_REQUESTS, detail="rate limit exceeded")
+                if minute_count > settings.RATE_LIMIT_PER_MINUTE or burst_count > settings.RATE_LIMIT_BURST:
+                    raise HTTPException(status_code=status.HTTP_429_TOO_MANY_REQUESTS, detail="rate limit exceeded")
+        except HTTPException:
+            raise
+        except Exception:
+            logger.warning("Rate limit check failed, allowing request", exc_info=settings.DEBUG)
 
     @staticmethod
     def _apply_security_headers(response: Response, request_id: str) -> None:

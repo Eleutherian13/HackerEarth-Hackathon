@@ -245,7 +245,7 @@ def configure_logging() -> None:
     handlers["stdout"] = stdout_handler
 
     # File handler (if configured)
-    if settings.LOG_FILE_PATH:
+    if settings.LOG_FILE_PATH and str(settings.LOG_FILE_PATH).strip() not in ("", "."):
         log_file = Path(settings.LOG_FILE_PATH)
         log_file.parent.mkdir(parents=True, exist_ok=True)
 
