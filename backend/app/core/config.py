@@ -58,7 +58,7 @@ class Settings(BaseSettings):
 
 	RATE_LIMIT_PER_MINUTE: int = 60
 	RATE_LIMIT_BURST: int = 100
-	CORS_ALLOWED_ORIGINS: list[str] = ["http://localhost:3000", "http://127.0.0.1:3000"]
+	CORS_ALLOWED_ORIGINS: list[str] = ["http://localhost:3000", "http://127.0.0.1:3000", "http://localhost:5173", "http://127.0.0.1:5173"]
 
 	LOG_LEVEL: Literal["DEBUG", "INFO", "WARNING", "ERROR"] = "INFO"
 	LOG_FORMAT: Literal["json", "text"] = "json"
@@ -68,6 +68,7 @@ class Settings(BaseSettings):
 
 	# Email Configuration
 	ADMIN_EMAIL: str = "admin@example.com"
+	FRONTEND_URL: str = "http://localhost:5173"
 	SMTP_ENABLED: bool = False
 	SMTP_HOST: str = "smtp.gmail.com"
 	SMTP_PORT: int = 587

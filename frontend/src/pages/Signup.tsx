@@ -6,19 +6,23 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
 export default function Signup() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [fullName, setFullName] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
   const handleAccessRequest = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email || !fullName) {
+    if (!email || !fullName || !password) {
       return toast.error("Please fill in all fields");
+    }
+    if (password.length < 12) {
+      return toast.error("Password must be at least 12 characters");
     }
     
     setLoading(true);
@@ -27,7 +31,7 @@ export default function Signup() {
       const response = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, full_name: fullName }),
+        body: JSON.stringify({ email, full_name: fullName, password }),
       });
       
       if (response.ok) {
@@ -83,7 +87,7 @@ export default function Signup() {
                 <CheckCircle2 className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
                 <div>
                   <p className="font-500 text-green-900">Request Submitted</p>
-                  <p className="text-sm text-green-700 mt-1">An administrator will review your request and create your account. You'll receive an email with login details.</p>
+                  <p className="text-sm text-green-700 mt-1">An administrator will review your request and activate your account. You'll be notified when approved.</p>
                 </div>
               </div>
               <div className="pt-4">
@@ -116,6 +120,18 @@ export default function Signup() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="officer@gov.in"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="password">Password</Label>
+                <Input
+                  id="password"
+                  type="password"
+                  required
+                  minLength={12}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Min 12 characters, include upper, lower, digit & special"
                 />
               </div>
               <div className="flex gap-2 rounded-sm border border-amber-200 bg-amber-50 p-3 text-sm">

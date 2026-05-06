@@ -74,11 +74,20 @@ def validate_password_strength(password: str) -> None:
 
 def hash_password(password: str) -> str:
     validate_password_strength(password)
-    return pwd_context.hash(password)
+    try:
+        import bcrypt
+        return bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt(rounds=12)).decode('utf-8')
+    except Exception:
+        return pwd_context.hash(password)
 
 
 def verify_password(password: str, hashed_password: str) -> bool:
-    return pwd_context.verify(password, hashed_password)
+    try:
+        import bcrypt
+        return bcrypt.checkpw(password.encode('utf-8'), hashed_password.encode('utf-8'))
+    except Exception:
+        # Fallback to passlib if bcrypt fails
+        return pwd_context.verify(password, hashed_password)
 
 
 def password_needs_upgrade(hashed_password: str) -> bool:

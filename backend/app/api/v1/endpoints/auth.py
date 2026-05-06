@@ -28,8 +28,8 @@ from app.core.security import (
     verify_token_payload,
 )
 from app.db.session import get_db
-from app.models.domain.models import Department, RefreshToken, User
-from app.models.enums import UserRole
+from app.models.domain.models import AccessRequest, Department, RefreshToken, User
+from app.models.enums import AccessRequestStatus, UserRole
 from app.models.schemas.auth import (
     AccessRequestRequest,
     AccessRequestResponse,
@@ -198,6 +198,36 @@ async def request_access(
             detail="Email already registered. Please sign in or contact an administrator.",
         )
     
+    # Check if access request already exists and is pending
+    existing_request = db.execute(
+        select(AccessRequest).where(
+            (AccessRequest.email == payload.email.lower()) & 
+            (AccessRequest.status == AccessRequestStatus.PENDING)
+        )
+    ).scalar_one_or_none()
+    
+    if existing_request:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="An access request with this email already exists and is pending admin approval.",
+        )
+    
+    # Store the access request in database
+    access_request = AccessRequest(
+        email=payload.email.lower(),
+        full_name=payload.full_name,
+        status=AccessRequestStatus.PENDING,
+    )
+    
+    # Hash and store password if provided
+    if payload.password:
+        from app.core.security import hash_password
+        access_request.hashed_password = hash_password(payload.password)
+    
+    db.add(access_request)
+    db.commit()
+    db.refresh(access_request)
+    
     # Send notification email to admin
     from app.core.email import send_access_request_notification
     try:
@@ -208,11 +238,6 @@ async def request_access(
     except Exception as e:
         print(f"Warning: Failed to send notification email: {e}")
         # Don't fail the request if email fails
-    
-    # In a production system, this would also:
-    # 1. Store the access request in an access_requests table
-    # 2. Set up workflow for admin approval
-    # 3. Auto-generate temporary credentials
     
     return AccessRequestResponse(
         message="Access request submitted successfully. An administrator will review and create your account."

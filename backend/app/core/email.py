@@ -108,3 +108,132 @@ LAOS Admin System
         body=body,
         html_body=html_body,
     )
+
+
+async def send_approval_email(
+    requester_name: str,
+    requester_email: str,
+    temporary_password: str,
+) -> bool:
+    """Send approval email to requester with login credentials."""
+    subject = "Your LAOS Account Has Been Created"
+    
+    body = f"""
+Dear {requester_name},
+
+Your access request has been approved, and your account has been created.
+
+Login Credentials:
+Email: {requester_email}
+Temporary Password: {temporary_password}
+
+Login at: {settings.FRONTEND_URL or 'http://localhost:5173'}
+
+IMPORTANT: Please change your password upon first login for security.
+
+Best regards,
+LAOS Admin System
+    """.strip()
+
+    html_body = f"""
+    <html>
+        <body style="font-family: Arial, sans-serif; color: #333;">
+            <div style="max-width: 600px; margin: 0 auto;">
+                <h2 style="color: #003366;">Access Approved</h2>
+                <p>Dear {requester_name},</p>
+                <p>Your access request has been approved, and your account has been created.</p>
+                
+                <div style="background-color: #f5f5f5; padding: 20px; border-radius: 5px; margin: 20px 0;">
+                    <h3 style="margin-top: 0;">Login Credentials</h3>
+                    <table style="border-collapse: collapse; width: 100%;">
+                        <tr>
+                            <td style="padding: 8px; font-weight: bold; width: 120px;">Email:</td>
+                            <td style="padding: 8px; font-family: monospace;">{requester_email}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px; font-weight: bold;">Password:</td>
+                            <td style="padding: 8px; font-family: monospace; background-color: #fff3cd; padding: 8px; border-radius: 3px;">{temporary_password}</td>
+                        </tr>
+                    </table>
+                </div>
+                
+                <p style="background-color: #fff3cd; padding: 12px; border-left: 4px solid #ffc107; border-radius: 3px;">
+                    <strong>IMPORTANT:</strong> Please change your password upon first login for security.
+                </p>
+                
+                <p>
+                    <a href="{settings.FRONTEND_URL or 'http://localhost:5173'}" style="display: inline-block; padding: 10px 20px; background-color: #003366; color: white; text-decoration: none; border-radius: 5px; margin-top: 10px;">
+                        Go to LAOS
+                    </a>
+                </p>
+                
+                <hr style="border: none; border-top: 1px solid #ddd; margin: 30px 0;">
+                <p style="color: #999; font-size: 12px;">
+                    This is an automated email from LAOS Admin System. Please do not reply to this email.
+                </p>
+            </div>
+        </body>
+    </html>
+    """
+
+    return await send_email(
+        subject=subject,
+        recipient=requester_email,
+        body=body,
+        html_body=html_body,
+    )
+
+
+async def send_rejection_email(
+    requester_name: str,
+    requester_email: str,
+    rejection_reason: str = "Your access request could not be approved at this time.",
+) -> bool:
+    """Send rejection email to requester."""
+    subject = "Your LAOS Access Request - Unable to Approve"
+    
+    body = f"""
+Dear {requester_name},
+
+Thank you for your interest in accessing LAOS (Legal Action Orchestration System).
+
+Unfortunately, your access request could not be approved.
+
+Reason: {rejection_reason}
+
+If you have questions, please contact the LAOS administrator.
+
+Best regards,
+LAOS Admin System
+    """.strip()
+
+    html_body = f"""
+    <html>
+        <body style="font-family: Arial, sans-serif; color: #333;">
+            <div style="max-width: 600px; margin: 0 auto;">
+                <h2 style="color: #d32f2f;">Request Status</h2>
+                <p>Dear {requester_name},</p>
+                <p>Thank you for your interest in accessing LAOS (Legal Action Orchestration System).</p>
+                
+                <div style="background-color: #ffebee; padding: 20px; border-radius: 5px; margin: 20px 0; border-left: 4px solid #d32f2f;">
+                    <h3 style="margin-top: 0; color: #d32f2f;">Access Request Not Approved</h3>
+                    <p><strong>Reason:</strong> {rejection_reason}</p>
+                </div>
+                
+                <p>If you have questions or would like to resubmit your request, please contact the LAOS administrator.</p>
+                
+                <hr style="border: none; border-top: 1px solid #ddd; margin: 30px 0;">
+                <p style="color: #999; font-size: 12px;">
+                    This is an automated email from LAOS Admin System. Please do not reply to this email.
+                </p>
+            </div>
+        </body>
+    </html>
+    """
+
+    return await send_email(
+        subject=subject,
+        recipient=requester_email,
+        body=body,
+        html_body=html_body,
+    )

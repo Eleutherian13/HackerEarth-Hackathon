@@ -105,6 +105,37 @@ class User(TimestampMixin, Base):
     refresh_tokens = relationship("RefreshToken", back_populates="user", cascade="all, delete-orphan", passive_deletes=True)
 
 
+class AccessRequest(TimestampMixin, Base):
+    """Model for storing user access requests pending admin approval."""
+
+    __tablename__ = "access_requests"
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    email: Mapped[str] = mapped_column(String(255), nullable=False, unique=True)
+    full_name: Mapped[str] = mapped_column(String(100), nullable=False)
+    status: Mapped[AccessRequestStatus] = mapped_column(
+        SQLEnum(AccessRequestStatus, name="access_request_status", native_enum=True),
+        nullable=False,
+        default=AccessRequestStatus.PENDING,
+    )
+    decision_reason: Mapped[str | None] = mapped_column(Text, nullable=True)
+    hashed_password: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    reviewed_by_admin_id: Mapped[uuid.UUID | None] = mapped_column(
+        UUID_TYPE,
+        ForeignKey("users.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
+    )
+    reviewed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+
+    reviewed_by_admin = relationship("User", foreign_keys=[reviewed_by_admin_id])
+
+    __table_args__ = (
+        Index("ix_access_requests_status_created_at", "status", "created_at"),
+        Index("ix_access_requests_email", "email"),
+    )
+
+
 class Document(TimestampMixin, Base):
     __tablename__ = "documents"
 

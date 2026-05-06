@@ -1,15 +1,17 @@
 from __future__ import annotations
 
+from datetime import datetime
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Query
-from pydantic import ConfigDict
+from pydantic import ConfigDict, field_serializer
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
-from app.api.deps import get_db, require_role
+from app.api.deps import get_db, get_current_active_user, require_role
 from app.core.config import settings
 from app.models.domain.models import AuditLog, Department, ProcessingJob, User
-from app.models.enums import JobStatus, UserRole
+from app.models.enums import JobStatus, UserRole, AccessRequestStatus
 from app.models.schemas.base import StrictSchema
 from app.models.schemas.responses import AuditLogResponse
 
@@ -213,3 +215,260 @@ async def get_queue_status(db: Session = Depends(get_db)) -> QueueStatusResponse
     failed = db.query(ProcessingJob).filter(ProcessingJob.status == JobStatus.FAILED).count()
     completed = db.query(ProcessingJob).filter(ProcessingJob.status == JobStatus.COMPLETED).count()
     return QueueStatusResponse(processing=processing, pending=pending, failed=failed, completed=completed)
+
+
+# ============ Access Request Management ============
+
+class AccessRequestEntry(StrictSchema):
+    model_config = ConfigDict(from_attributes=True, populate_by_name=True)
+
+    id: UUID
+    email: str
+    full_name: str
+    status: str
+    created_at: datetime
+    reviewed_at: datetime | None = None
+    
+    @field_serializer('status')
+    def serialize_status(self, value):
+        if isinstance(value, AccessRequestStatus):
+            return value.value
+        return value
+
+
+class AccessRequestListResponse(StrictSchema):
+    model_config = ConfigDict(from_attributes=True, populate_by_name=True)
+
+    items: list[AccessRequestEntry]
+    total: int
+
+
+class AccessRequestApprovalPayload(StrictSchema):
+    model_config = ConfigDict(from_attributes=True, populate_by_name=True, strict=False)
+
+    department_id: UUID
+
+
+class AccessRequestApprovalResponse(StrictSchema):
+    model_config = ConfigDict(from_attributes=True, populate_by_name=True)
+
+    message: str
+    user_id: UUID | None = None
+    temporary_password: str | None = None
+
+
+class AccessRequestRejectionPayload(StrictSchema):
+    model_config = ConfigDict(from_attributes=True, populate_by_name=True)
+
+    reason: str = "Your access request could not be approved at this time."
+
+
+@router.get(
+    "/admin/access-requests",
+    response_model=AccessRequestListResponse,
+    dependencies=[Depends(require_role(UserRole.ADMIN))],
+)
+async def list_access_requests(
+    db: Session = Depends(get_db),
+    status: str | None = Query(None),
+    page: int = Query(1, ge=1),
+    per_page: int = Query(50, ge=1, le=200),
+) -> AccessRequestListResponse:
+    """List all access requests."""
+    from app.models.domain.models import AccessRequest
+    from app.models.enums import AccessRequestStatus
+    from sqlalchemy import select
+    
+    query = select(AccessRequest)
+    
+    if status:
+        # Convert string to enum
+        try:
+            status_enum = AccessRequestStatus[status.upper()]
+            query = query.where(AccessRequest.status == status_enum)
+        except KeyError:
+            raise HTTPException(status_code=400, detail=f"Invalid status: {status}")
+    else:
+        # Default to showing pending requests
+        query = query.where(AccessRequest.status == AccessRequestStatus.PENDING)
+    
+    # Order by newest first
+    query = query.order_by(AccessRequest.created_at.desc())
+    
+    # Get total count with the same filter
+    count_query = select(func.count()).select_from(AccessRequest)
+    if status:
+        try:
+            status_enum = AccessRequestStatus[status.upper()]
+            count_query = count_query.where(AccessRequest.status == status_enum)
+        except KeyError:
+            raise HTTPException(status_code=400, detail=f"Invalid status: {status}")
+    else:
+        count_query = count_query.where(AccessRequest.status == AccessRequestStatus.PENDING)
+    
+    total = db.execute(count_query).scalar()
+    items = db.execute(query.limit(per_page).offset((page - 1) * per_page)).scalars().all()
+    
+    return AccessRequestListResponse(
+        items=[AccessRequestEntry.model_validate(item) for item in items],
+        total=total,
+    )
+
+
+@router.post(
+    "/admin/access-requests/{request_id}/approve",
+    response_model=AccessRequestApprovalResponse,
+    dependencies=[Depends(require_role(UserRole.ADMIN))],
+)
+async def approve_access_request(
+    request_id: UUID,
+    payload: AccessRequestApprovalPayload,
+    current_user: User = Depends(get_current_active_user),
+    db: Session = Depends(get_db),
+) -> AccessRequestApprovalResponse:
+    """Approve an access request and create a user account."""
+    from app.models.domain.models import AccessRequest
+    from app.models.enums import AccessRequestStatus
+    from sqlalchemy import select
+    from app.core.security import hash_password
+    import secrets
+    import string
+    
+    # Get the access request
+    access_request = db.execute(
+        select(AccessRequest).where(AccessRequest.id == request_id)
+    ).scalar_one_or_none()
+    
+    if not access_request:
+        raise HTTPException(status_code=404, detail="Access request not found")
+    
+    if access_request.status != AccessRequestStatus.PENDING:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Cannot approve a request with status {access_request.status}",
+        )
+    
+    # Check if department exists
+    department = db.query(Department).filter(Department.id == payload.department_id).first()
+    if not department:
+        raise HTTPException(status_code=404, detail="Department not found")
+    
+    # Use password from request if provided, otherwise generate temporary one
+    if access_request.hashed_password:
+        hashed_password = access_request.hashed_password
+        temporary_password = None
+        must_change = False
+    else:
+        # Generate temporary password guaranteed to meet strength requirements
+        upper = string.ascii_uppercase
+        lower = string.ascii_lowercase
+        digits = string.digits
+        special = "!@#$%^&*"
+        all_chars = upper + lower + digits + special
+        
+        password_chars = [
+            secrets.choice(upper),
+            secrets.choice(lower),
+            secrets.choice(digits),
+            secrets.choice(special),
+        ]
+        password_chars.extend(secrets.choice(all_chars) for _ in range(8))
+        secrets.SystemRandom().shuffle(password_chars)
+        temporary_password = "".join(password_chars)
+        hashed_password = hash_password(temporary_password)
+        must_change = True
+    
+    # Create user account
+    new_user = User(
+        email=access_request.email,
+        full_name=access_request.full_name,
+        hashed_password=hashed_password,
+        department_id=payload.department_id,
+        role=UserRole.OFFICER,
+        is_active=True,
+        must_change_password=must_change,
+    )
+    
+    db.add(new_user)
+    db.flush()
+    
+    # Update access request
+    from datetime import datetime, timezone
+    access_request.status = AccessRequestStatus.APPROVED
+    access_request.reviewed_by_admin_id = current_user.id
+    access_request.reviewed_at = datetime.now(timezone.utc)
+    
+    db.commit()
+    db.refresh(new_user)
+    
+    # Send approval email (only if temp password was generated)
+    if temporary_password:
+        try:
+            from app.core.email import send_approval_email
+            await send_approval_email(
+                requester_name=access_request.full_name,
+                requester_email=access_request.email,
+                temporary_password=temporary_password,
+            )
+        except Exception as e:
+            print(f"Warning: Failed to send approval email: {e}")
+    
+    return AccessRequestApprovalResponse(
+        message=f"User account created for {access_request.full_name}",
+        user_id=new_user.id,
+        temporary_password=temporary_password,
+    )
+
+
+@router.post(
+    "/admin/access-requests/{request_id}/reject",
+    response_model=dict,
+    dependencies=[Depends(require_role(UserRole.ADMIN))],
+)
+async def reject_access_request(
+    request_id: UUID,
+    payload: AccessRequestRejectionPayload,
+    current_user: User = Depends(get_current_active_user),
+    db: Session = Depends(get_db),
+) -> dict:
+    """Reject an access request."""
+    from app.models.domain.models import AccessRequest
+    from app.models.enums import AccessRequestStatus
+    from sqlalchemy import select
+    from datetime import datetime, timezone
+    
+    # Get the access request
+    access_request = db.execute(
+        select(AccessRequest).where(AccessRequest.id == request_id)
+    ).scalar_one_or_none()
+    
+    if not access_request:
+        raise HTTPException(status_code=404, detail="Access request not found")
+    
+    if access_request.status != AccessRequestStatus.PENDING:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Cannot reject a request with status {access_request.status}",
+        )
+    
+    # Update access request
+    access_request.status = AccessRequestStatus.REJECTED
+    access_request.decision_reason = payload.reason
+    access_request.reviewed_by_admin_id = current_user.id
+    access_request.reviewed_at = datetime.now(timezone.utc)
+    
+    db.commit()
+    
+    # Send rejection email
+    try:
+        from app.core.email import send_rejection_email
+        await send_rejection_email(
+            requester_name=access_request.full_name,
+            requester_email=access_request.email,
+            rejection_reason=payload.reason,
+        )
+    except Exception as e:
+        print(f"Warning: Failed to send rejection email: {e}")
+        # Don't fail the request if email fails
+    
+    return {"message": f"Access request from {access_request.full_name} has been rejected"}

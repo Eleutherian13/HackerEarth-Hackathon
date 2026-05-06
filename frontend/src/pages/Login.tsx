@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -31,10 +31,14 @@ export default function Login() {
       formData.append("username", email);
       formData.append("password", password);
       
+      console.log("Attempting login with:", email);
+      
       const response = await fetch(`${API_URL}/api/v1/auth/login`, {
         method: "POST",
         body: formData,
       });
+      
+      console.log("Login response status:", response.status);
       
       if (!response.ok) {
         let errorMessage = "Invalid credentials";
@@ -44,16 +48,27 @@ export default function Login() {
         } catch {
           errorMessage = response.statusText || errorMessage;
         }
+        console.error("Login error response:", errorMessage);
         return toast.error(errorMessage);
       }
       
       const data = await response.json();
+      console.log("Login successful, storing token");
       localStorage.setItem("access_token", data.access_token);
-      localStorage.setItem("refresh_token", data.refresh_token);
+      localStorage.setItem("refresh_token", data.refresh_token || "");
       localStorage.setItem("user_email", email);
-      
+
+      // Decode JWT to get role
+      try {
+        const payload = JSON.parse(atob(data.access_token.split(".")[1]));
+        localStorage.setItem("user_role", payload.role || "");
+      } catch {}
+
+      // Notify Header component about auth change
+      window.dispatchEvent(new Event("auth-changed"));
+
       toast.success("Signed in successfully");
-      navigate("/", { replace: true });
+      navigate("/admin/access-requests", { replace: true });
     } catch (error) {
       toast.error("Login failed. Please try again.");
       console.error("Login error:", error);

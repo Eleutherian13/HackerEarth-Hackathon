@@ -229,6 +229,7 @@ class AccessRequestRequest(StrictSchema):
                 {
                     "email": "officer@example.gov",
                     "full_name": "Officer Name",
+                    "password": "SecurePass@123",
                 }
             ]
         },
@@ -236,6 +237,7 @@ class AccessRequestRequest(StrictSchema):
 
     email: str = Field(min_length=5)
     full_name: str = Field(min_length=2)
+    password: str | None = Field(default=None, min_length=12)
 
     @field_validator("email", "full_name", mode="before")
     @classmethod
