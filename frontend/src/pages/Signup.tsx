@@ -1,58 +1,52 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Scale } from "lucide-react";
+import { Scale, AlertCircle, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { authService } from "@/lib/api-service";
+
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
 export default function Signup() {
   const navigate = useNavigate();
-  const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [fullName, setFullName] = useState("");
   const [loading, setLoading] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
 
-  const handleSignup = async (e: React.FormEvent) => {
+  const handleAccessRequest = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (password.length < 12) {
-      return toast.error("Password must be at least 12 characters with upper, lower, digit, and special characters");
+    if (!email || !fullName) {
+      return toast.error("Please fill in all fields");
     }
-    if (!fullName.trim()) {
-      return toast.error("Full name is required");
-    }
-
+    
     setLoading(true);
     try {
-      const response = await authService.register({
-        full_name: fullName,
-        email,
-        password,
+      const url = `${API_URL}/api/v1/auth/request-access`;
+      const response = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, full_name: fullName }),
       });
-
-      if (response.access_token) {
-        // Store tokens and user info
-        localStorage.setItem("auth_token", response.access_token);
-        if (response.refresh_token) {
-          localStorage.setItem("refresh_token", response.refresh_token);
-        }
-        if (response.user) {
-          localStorage.setItem("user_email", response.user.email);
-          localStorage.setItem("user_id", response.user.id);
-          if (response.user.role) {
-            localStorage.setItem("user_role", response.user.role);
-          }
-        }
-
-        toast.success("Account created successfully!");
-        navigate("/", { replace: true });
+      
+      if (response.ok) {
+        setSubmitted(true);
+        toast.success("Access request submitted successfully");
       } else {
-        toast.error("Account creation failed");
+        let errorMessage = "Failed to submit access request";
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.detail || errorMessage;
+        } catch {
+          // If response isn't JSON, use status text
+          errorMessage = response.statusText || errorMessage;
+        }
+        toast.error(errorMessage);
       }
-    } catch (error: any) {
-      const message = error?.response?.data?.detail || error?.message || "Registration failed";
-      toast.error(message);
+    } catch (error) {
+      toast.error("Network error. Please try again.");
+      console.error("Access request error:", error);
     } finally {
       setLoading(false);
     }
@@ -79,52 +73,62 @@ export default function Signup() {
             <div className="text-[11px] uppercase tracking-[0.2em] text-accent">Departmental Onboarding</div>
             <h1 className="mt-1 font-display text-2xl font-500 text-ink">Request Officer Access</h1>
             <p className="mt-1 text-sm text-muted-foreground">
-              Create credentials to begin reviewing directives and orchestrating compliance.
+              Submit your details for admin approval to begin reviewing directives.
             </p>
           </div>
 
-          <form onSubmit={handleSignup} className="space-y-4">
-            <div className="space-y-1.5">
-              <Label htmlFor="fullName">Full Name</Label>
-              <Input
-                id="fullName"
-                name="fullName"
-                type="text"
-                required
-                value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
-                placeholder="John Doe"
-              />
+          {submitted ? (
+            <div className="space-y-4">
+              <div className="flex gap-3 rounded-sm border border-green-200 bg-green-50 p-4">
+                <CheckCircle2 className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
+                <div>
+                  <p className="font-500 text-green-900">Request Submitted</p>
+                  <p className="text-sm text-green-700 mt-1">An administrator will review your request and create your account. You'll receive an email with login details.</p>
+                </div>
+              </div>
+              <div className="pt-4">
+                <Link to="/login" className="block text-center">
+                  <Button variant="outline" className="w-full">
+                    Back to Login
+                  </Button>
+                </Link>
+              </div>
             </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="email">Official Email</Label>
-              <Input
-                id="email"
-                name="email"
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="officer@gov.in"
-              />
-            </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                name="password"
-                type="password"
-                required
-                minLength={8}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-              <p className="text-xs text-muted-foreground">Minimum 8 characters.</p>
-            </div>
-            <Button type="submit" disabled={loading} className="w-full">
-              {loading ? "Creating account…" : "Create Account"}
-            </Button>
-          </form>
+          ) : (
+            <form onSubmit={handleAccessRequest} className="space-y-4">
+              <div className="space-y-1.5">
+                <Label htmlFor="fullName">Full Name</Label>
+                <Input
+                  id="fullName"
+                  type="text"
+                  required
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  placeholder="Officer Name"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="email">Official Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="officer@gov.in"
+                />
+              </div>
+              <div className="flex gap-2 rounded-sm border border-amber-200 bg-amber-50 p-3 text-sm">
+                <AlertCircle className="h-4 w-4 text-amber-600 flex-shrink-0 mt-0.5" />
+                <p className="text-amber-700">
+                  Account creation requires administrator approval. You'll be notified when your access is ready.
+                </p>
+              </div>
+              <Button type="submit" disabled={loading} className="w-full">
+                {loading ? "Submitting…" : "Submit Access Request"}
+              </Button>
+            </form>
+          )}
 
           <p className="mt-6 text-center text-sm text-muted-foreground">
             Already enrolled?{" "}

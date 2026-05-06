@@ -31,6 +31,8 @@ from app.db.session import get_db
 from app.models.domain.models import Department, RefreshToken, User
 from app.models.enums import UserRole
 from app.models.schemas.auth import (
+    AccessRequestRequest,
+    AccessRequestResponse,
     AuthTokenResponse,
     CurrentUserResponse,
     LogoutRequest,
@@ -173,4 +175,45 @@ async def change_current_password(
     return PasswordChangeResponse(
         message="Password updated successfully.",
         password_changed_at=updated_user.password_changed_at.isoformat(),
+    )
+
+
+@router.post("/request-access", response_model=AccessRequestResponse)
+async def request_access(
+    payload: AccessRequestRequest,
+    db: Session = Depends(get_db),
+):
+    """
+    Submit an access request for a new user.
+    An administrator must approve and create the account.
+    """
+    # Check if user already exists
+    existing_user = db.execute(
+        select(User).where(User.email == payload.email.lower())
+    ).scalar_one_or_none()
+    
+    if existing_user:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Email already registered. Please sign in or contact an administrator.",
+        )
+    
+    # Send notification email to admin
+    from app.core.email import send_access_request_notification
+    try:
+        await send_access_request_notification(
+            requester_name=payload.full_name,
+            requester_email=payload.email,
+        )
+    except Exception as e:
+        print(f"Warning: Failed to send notification email: {e}")
+        # Don't fail the request if email fails
+    
+    # In a production system, this would also:
+    # 1. Store the access request in an access_requests table
+    # 2. Set up workflow for admin approval
+    # 3. Auto-generate temporary credentials
+    
+    return AccessRequestResponse(
+        message="Access request submitted successfully. An administrator will review and create your account."
     )

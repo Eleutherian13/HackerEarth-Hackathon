@@ -66,6 +66,16 @@ class Settings(BaseSettings):
 	SENTRY_DSN: str | None = None
 	TESTING: bool = False
 
+	# Email Configuration
+	ADMIN_EMAIL: str = "admin@example.com"
+	SMTP_ENABLED: bool = False
+	SMTP_HOST: str = "smtp.gmail.com"
+	SMTP_PORT: int = 587
+	SMTP_USER: str = ""
+	SMTP_PASSWORD: str = ""
+	SMTP_FROM_EMAIL: str = ""
+	SMTP_FROM_NAME: str = "LAOS Admin"
+
 	@field_validator(
 		"SECRET_KEY",
 		"JWT_SECRET_KEY",

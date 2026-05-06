@@ -1,11 +1,12 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Scale } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { authService } from "@/lib/api-service";
+
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -13,34 +14,49 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
+  useEffect(() => {
+    // Check if already logged in
+    const token = localStorage.getItem("access_token");
+    if (token) {
+      navigate("/", { replace: true });
+    }
+  }, [navigate]);
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    
     try {
-      const response = await authService.login({ email, password });
+      const formData = new FormData();
+      formData.append("username", email);
+      formData.append("password", password);
       
-      if (response.access_token) {
-        // Store tokens and user info
-        localStorage.setItem("auth_token", response.access_token);
-        if (response.refresh_token) {
-          localStorage.setItem("refresh_token", response.refresh_token);
+      const response = await fetch(`${API_URL}/api/v1/auth/login`, {
+        method: "POST",
+        body: formData,
+      });
+      
+      if (!response.ok) {
+        let errorMessage = "Invalid credentials";
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.detail || errorMessage;
+        } catch {
+          errorMessage = response.statusText || errorMessage;
         }
-        if (response.user) {
-          localStorage.setItem("user_email", response.user.email);
-          localStorage.setItem("user_id", response.user.id);
-          if (response.user.role) {
-            localStorage.setItem("user_role", response.user.role);
-          }
-        }
-
-        toast.success("Signed in successfully");
-        navigate("/", { replace: true });
-      } else {
-        toast.error("Login failed");
+        return toast.error(errorMessage);
       }
-    } catch (error: any) {
-      const message = error?.response?.data?.detail || error?.message || "Login failed";
-      toast.error(message);
+      
+      const data = await response.json();
+      localStorage.setItem("access_token", data.access_token);
+      localStorage.setItem("refresh_token", data.refresh_token);
+      localStorage.setItem("user_email", email);
+      
+      toast.success("Signed in successfully");
+      navigate("/", { replace: true });
+    } catch (error) {
+      toast.error("Login failed. Please try again.");
+      console.error("Login error:", error);
     } finally {
       setLoading(false);
     }
@@ -76,7 +92,6 @@ export default function Login() {
               <Label htmlFor="email">Official Email</Label>
               <Input
                 id="email"
-                name="email"
                 type="email"
                 required
                 value={email}
@@ -88,7 +103,6 @@ export default function Login() {
               <Label htmlFor="password">Password</Label>
               <Input
                 id="password"
-                name="password"
                 type="password"
                 required
                 value={password}
@@ -107,6 +121,10 @@ export default function Login() {
             </Link>
           </p>
         </div>
+
+        <p className="mt-6 text-center text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+          Authorised personnel only · All sessions are audited
+        </p>
       </div>
     </div>
   );

@@ -28,6 +28,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.orm import object_session
 
 from app.models.enums import (
+    AccessRequestStatus,
     ActionType,
     AuditEventType,
     CompletionStatus,
@@ -361,11 +362,11 @@ class ActionPlanItem(TimestampMixin, Base):
     verified_by_user = relationship("User", back_populates="verified_action_plan_items")
 
     __table_args__ = (
-        Index("ix_action_plan_items_document_id_completion_status", "document_id", "completion_status"),
-        Index("ix_action_plan_items_document_id_verification_status", "document_id", "verification_status"),
-        Index("ix_action_plan_items_due_date", "due_date"),
-        Index("ix_action_plan_items_responsible_department_id_completion_status", "responsible_department_id", "completion_status"),
-        Index("ix_action_plan_items_source_evidence_gin", "source_evidence", postgresql_using="gin"),
+        Index("ix_api_doc_id_completion_status", "document_id", "completion_status"),
+        Index("ix_api_doc_id_verification_status", "document_id", "verification_status"),
+        Index("ix_api_due_date", "due_date"),
+        Index("ix_api_dept_id_completion", "responsible_department_id", "completion_status"),
+        Index("ix_api_source_evidence_gin", "source_evidence", postgresql_using="gin"),
     )
 
 

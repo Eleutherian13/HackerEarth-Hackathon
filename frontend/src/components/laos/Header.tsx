@@ -1,6 +1,7 @@
 import { Scale, Search, Bell, LogOut, LogIn } from "lucide-react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 const links = [
   { to: "/", label: "Dashboard" },
@@ -15,31 +16,15 @@ export const Header = () => {
   const [email, setEmail] = useState<string | null>(null);
 
   useEffect(() => {
-    // Get user email from localStorage (set during login)
-    const userEmail = localStorage.getItem("user_email");
-    if (userEmail) {
-      setEmail(userEmail);
-    }
-
-    // Listen for logout events
-    const handleLogout = () => {
-      setEmail(null);
-    };
-    window.addEventListener("logout", handleLogout);
-    return () => window.removeEventListener("logout", handleLogout);
+    const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
+      setEmail(session?.user?.email ?? null);
+    });
+    supabase.auth.getSession().then(({ data }) => setEmail(data.session?.user?.email ?? null));
+    return () => sub.subscription.unsubscribe();
   }, []);
 
   const handleSignOut = async () => {
-    // Clear auth data
-    localStorage.removeItem("auth_token");
-    localStorage.removeItem("refresh_token");
-    localStorage.removeItem("user_email");
-    localStorage.removeItem("user_id");
-    localStorage.removeItem("user_role");
-    
-    // Dispatch logout event
-    window.dispatchEvent(new Event("logout"));
-    
+    await supabase.auth.signOut();
     navigate("/login");
   };
 

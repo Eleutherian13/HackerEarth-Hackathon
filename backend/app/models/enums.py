@@ -123,3 +123,10 @@ class JobStatus(str, Enum):
 	COMPLETED = "COMPLETED"
 	FAILED = "FAILED"
 	RETRYING = "RETRYING"
+
+
+class AccessRequestStatus(str, Enum):
+	PENDING = "PENDING"
+	APPROVED = "APPROVED"
+	REJECTED = "REJECTED"
+	EXPIRED = "EXPIRED"

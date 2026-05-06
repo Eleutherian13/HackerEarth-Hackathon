@@ -215,3 +215,53 @@ class PasswordChangeResponse(StrictSchema):
     @classmethod
     def normalize_text(cls, value: Any, info):
         return normalize_required_text(value, info.field_name)
+
+
+class AccessRequestRequest(StrictSchema):
+    model_config = ConfigDict(
+        strict=True,
+        extra="forbid",
+        from_attributes=True,
+        populate_by_name=True,
+        use_enum_values=False,
+        json_schema_extra={
+            "examples": [
+                {
+                    "email": "officer@example.gov",
+                    "full_name": "Officer Name",
+                }
+            ]
+        },
+    )
+
+    email: str = Field(min_length=5)
+    full_name: str = Field(min_length=2)
+
+    @field_validator("email", "full_name", mode="before")
+    @classmethod
+    def normalize_text(cls, value: Any, info):
+        return normalize_required_text(value, info.field_name)
+
+
+class AccessRequestResponse(StrictSchema):
+    model_config = ConfigDict(
+        strict=True,
+        extra="forbid",
+        from_attributes=True,
+        populate_by_name=True,
+        use_enum_values=False,
+        json_schema_extra={
+            "examples": [
+                {
+                    "message": "Access request submitted successfully. An administrator will review and create your account.",
+                }
+            ]
+        },
+    )
+
+    message: str
+
+    @field_validator("message", mode="before")
+    @classmethod
+    def normalize_message(cls, value: Any) -> str:
+        return normalize_required_text(value, "message")
