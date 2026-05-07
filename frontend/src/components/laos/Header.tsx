@@ -1,60 +1,32 @@
 import { Scale, Search, Bell, LogOut, LogIn } from "lucide-react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 const links = [
   { to: "/", label: "Dashboard" },
   { to: "/cases", label: "Cases" },
+  { to: "/upload", label: "Upload" },
   { to: "/verification", label: "Verification" },
+  { to: "/action-plan", label: "Action Plan" },
   { to: "/departments", label: "Departments" },
   { to: "/audit", label: "Audit Trail" },
 ];
 
-const adminLinks = [
-  { to: "/admin/access-requests", label: "Access Requests" },
-];
-
 export const Header = () => {
   const navigate = useNavigate();
-  const [email, setEmail] = useState<string | null>(
-    () => {
-      const token = localStorage.getItem("access_token");
-      return token ? localStorage.getItem("user_email") : null;
-    }
-  );
-  const [role, setRole] = useState<string | null>(
-    () => localStorage.getItem("user_role")
-  );
-
-  const isAdmin = role === "SUPERADMIN" || role === "ADMIN";
+  const [email, setEmail] = useState<string | null>(null);
 
   useEffect(() => {
-    const checkAuth = () => {
-      const token = localStorage.getItem("access_token");
-      const storedEmail = localStorage.getItem("user_email");
-      const storedRole = localStorage.getItem("user_role");
-      setEmail(token && storedEmail ? storedEmail : null);
-      setRole(token && storedRole ? storedRole : null);
-    };
-
-    // Listen for storage changes (e.g., login in another tab)
-    window.addEventListener("storage", checkAuth);
-    // Custom event for same-tab login notification
-    window.addEventListener("auth-changed", checkAuth);
-    return () => {
-      window.removeEventListener("storage", checkAuth);
-      window.removeEventListener("auth-changed", checkAuth);
-    };
+    const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
+      setEmail(session?.user?.email ?? null);
+    });
+    supabase.auth.getSession().then(({ data }) => setEmail(data.session?.user?.email ?? null));
+    return () => sub.subscription.unsubscribe();
   }, []);
 
-  const handleSignOut = () => {
-    localStorage.removeItem("access_token");
-    localStorage.removeItem("refresh_token");
-    localStorage.removeItem("user_email");
-    localStorage.removeItem("user_role");
-    setEmail(null);
-    setRole(null);
-    window.dispatchEvent(new Event("auth-changed"));
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
     navigate("/login");
   };
 
@@ -83,21 +55,6 @@ export const Header = () => {
                 `rounded-sm px-3 py-1.5 transition-colors ${
                   isActive
                     ? "bg-secondary text-foreground"
-                    : "text-muted-foreground hover:bg-secondary/60 hover:text-foreground"
-                }`
-              }
-            >
-              {l.label}
-            </NavLink>
-          ))}
-          {isAdmin && adminLinks.map((l) => (
-            <NavLink
-              key={l.to}
-              to={l.to}
-              className={({ isActive }) =>
-                `rounded-sm px-3 py-1.5 transition-colors ${
-                  isActive
-                    ? "bg-accent/10 text-accent"
                     : "text-muted-foreground hover:bg-secondary/60 hover:text-foreground"
                 }`
               }

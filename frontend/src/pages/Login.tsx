@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Scale } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { lovable } from "@/integrations/lovable";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -15,66 +15,27 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    // Check if already logged in
-    const token = localStorage.getItem("access_token");
-    if (token) {
-      navigate("/", { replace: true });
-    }
+    supabase.auth.getSession().then(({ data }) => {
+      if (data.session) navigate("/", { replace: true });
+    });
   }, [navigate]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    
-    try {
-      const formData = new FormData();
-      formData.append("username", email);
-      formData.append("password", password);
-      
-      console.log("Attempting login with:", email);
-      
-      const response = await fetch(`${API_URL}/api/v1/auth/login`, {
-        method: "POST",
-        body: formData,
-      });
-      
-      console.log("Login response status:", response.status);
-      
-      if (!response.ok) {
-        let errorMessage = "Invalid credentials";
-        try {
-          const errorData = await response.json();
-          errorMessage = errorData.detail || errorMessage;
-        } catch {
-          errorMessage = response.statusText || errorMessage;
-        }
-        console.error("Login error response:", errorMessage);
-        return toast.error(errorMessage);
-      }
-      
-      const data = await response.json();
-      console.log("Login successful, storing token");
-      localStorage.setItem("access_token", data.access_token);
-      localStorage.setItem("refresh_token", data.refresh_token || "");
-      localStorage.setItem("user_email", email);
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    setLoading(false);
+    if (error) return toast.error(error.message);
+    toast.success("Signed in");
+    navigate("/", { replace: true });
+  };
 
-      // Decode JWT to get role
-      try {
-        const payload = JSON.parse(atob(data.access_token.split(".")[1]));
-        localStorage.setItem("user_role", payload.role || "");
-      } catch {}
-
-      // Notify Header component about auth change
-      window.dispatchEvent(new Event("auth-changed"));
-
-      toast.success("Signed in successfully");
-      navigate("/admin/access-requests", { replace: true });
-    } catch (error) {
-      toast.error("Login failed. Please try again.");
-      console.error("Login error:", error);
-    } finally {
-      setLoading(false);
-    }
+  const handleOAuth = async (provider: "google" | "apple" | "microsoft") => {
+    const result = await lovable.auth.signInWithOAuth(provider, {
+      redirect_uri: window.location.origin,
+    });
+    if (result.error) toast.error(result.error.message ?? "Sign-in failed");
+    else if (!result.redirected) navigate("/", { replace: true });
   };
 
   return (
@@ -106,10 +67,7 @@ export default function Login() {
             <div className="space-y-1.5">
               <Label htmlFor="email">Official Email</Label>
               <Input
-                id="email"
-                type="email"
-                required
-                value={email}
+                id="email" type="email" required value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="officer@gov.in"
               />
@@ -117,10 +75,7 @@ export default function Login() {
             <div className="space-y-1.5">
               <Label htmlFor="password">Password</Label>
               <Input
-                id="password"
-                type="password"
-                required
-                value={password}
+                id="password" type="password" required value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
             </div>
@@ -128,6 +83,16 @@ export default function Login() {
               {loading ? "Signing in…" : "Sign In"}
             </Button>
           </form>
+
+          <div className="my-6 flex items-center gap-3 text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+            <div className="h-px flex-1 bg-border" /> or continue with <div className="h-px flex-1 bg-border" />
+          </div>
+
+          <div className="grid grid-cols-3 gap-2">
+            <Button variant="outline" type="button" onClick={() => handleOAuth("google")}>Google</Button>
+            <Button variant="outline" type="button" onClick={() => handleOAuth("microsoft")}>Microsoft</Button>
+            <Button variant="outline" type="button" onClick={() => handleOAuth("apple")}>Apple</Button>
+          </div>
 
           <p className="mt-6 text-center text-sm text-muted-foreground">
             New officer?{" "}

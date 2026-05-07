@@ -1,5 +1,7 @@
 import { cases, directives } from "@/data/laos";
 import { AlertCircle, Clock, TrendingUp, Building2 } from "lucide-react";
+import { useApi } from "@/hooks/useApi";
+import { dashboardApi } from "@/lib/api";
 
 const statusCls: Record<string, string> = {
   in_review: "bg-warning/10 text-warning",
@@ -13,6 +15,10 @@ export const Dashboard = () => {
   const upcoming = directives
     .filter((d) => d.daysLeft >= 0 && d.daysLeft < 60)
     .sort((a, b) => a.daysLeft - b.daysLeft);
+
+  const stats = useApi(() => dashboardApi.summary(), []);
+  const live = stats.data;
+  const liveOn = !!live;
 
   return (
     <section className="border-b border-border bg-background py-20">
@@ -29,10 +35,10 @@ export const Dashboard = () => {
         {/* KPI strip */}
         <div className="mb-8 grid grid-cols-2 gap-px overflow-hidden rounded-sm border border-border bg-border md:grid-cols-4">
           {[
-            { i: TrendingUp, k: "47", v: "Active cases", c: "text-info" },
-            { i: Clock, k: "12", v: "Due in 7 days", c: "text-warning" },
-            { i: AlertCircle, k: "3", v: "Escalated", c: "text-destructive" },
-            { i: Building2, k: "18", v: "Departments engaged", c: "text-primary" },
+            { i: TrendingUp, k: liveOn ? String(live!.active_cases) : "47", v: "Active cases", c: "text-info" },
+            { i: Clock, k: liveOn ? String(live!.due_in_7_days) : "12", v: "Due in 7 days", c: "text-warning" },
+            { i: AlertCircle, k: liveOn ? String(live!.escalated) : "3", v: "Escalated", c: "text-destructive" },
+            { i: Building2, k: liveOn ? String(live!.departments_engaged) : "18", v: "Departments engaged", c: "text-primary" },
           ].map((s) => (
             <div key={s.v} className="bg-card p-5">
               <s.i className={`h-5 w-5 ${s.c}`} strokeWidth={1.5} />
