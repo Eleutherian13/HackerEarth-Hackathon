@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Scale } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
-import { lovable } from "@/integrations/lovable";
+import { authApi } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -15,28 +14,23 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
-      if (data.session) navigate("/", { replace: true });
-    });
+    authApi.me().then(() => navigate("/", { replace: true })).catch(() => {});
   }, [navigate]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    setLoading(false);
-    if (error) return toast.error(error.message);
-    toast.success("Signed in");
-    navigate("/", { replace: true });
+    try {
+      await authApi.login(email, password);
+      toast.success("Signed in");
+      navigate("/", { replace: true });
+    } catch (err: any) {
+      toast.error(err?.message ?? "Sign-in failed");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleOAuth = async (provider: "google" | "apple" | "microsoft") => {
-    const result = await lovable.auth.signInWithOAuth(provider, {
-      redirect_uri: window.location.origin,
-    });
-    if (result.error) toast.error(result.error.message ?? "Sign-in failed");
-    else if (!result.redirected) navigate("/", { replace: true });
-  };
 
   return (
     <div className="min-h-screen bg-gradient-parchment flex items-center justify-center px-6 py-12">
