@@ -21,6 +21,7 @@ from app.core.security import (
     is_jti_blacklisted,
     request_context_from_request,
     validate_access_token,
+    get_or_create_bypass_user,
 )
 from app.models.enums import UserRole
 
@@ -33,27 +34,43 @@ class AuthMiddleware(BaseHTTPMiddleware):
         request.state.request_id = request_id
         request.state.context = AuthContext(user=None, role=None, department_id=None, request_id=request_id)
 
-        token = self._extract_bearer_token(request)
-        if token is not None:
+        # Check if auth bypass is enabled
+        if settings.AUTH_BYPASS:
+            db = get_db_session()
             try:
-                payload = await validate_access_token(token)
-                db = get_db_session()
+                user = get_or_create_bypass_user(db)
+                request.state.context = AuthContext(
+                    user=user,
+                    role=user.role,
+                    department_id=user.department_id,
+                    request_id=request_id,
+                    token_jti=None,
+                )
+            finally:
+                db.close()
+        else:
+            # Normal auth flow
+            token = self._extract_bearer_token(request)
+            if token is not None:
                 try:
-                    user = get_current_user_from_payload(db, payload)
-                    request.state.context = AuthContext(
-                        user=user,
-                        role=user.role,
-                        department_id=user.department_id,
-                        request_id=request_id,
-                        token_jti=payload["jti"],
-                    )
-                finally:
-                    db.close()
-            except HTTPException:
-                raise
-            except Exception as exc:  # pragma: no cover - defensive path
-                logger.exception("Failed to validate bearer token: %s", exc)
-                raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="invalid authentication token")
+                    payload = await validate_access_token(token)
+                    db = get_db_session()
+                    try:
+                        user = get_current_user_from_payload(db, payload)
+                        request.state.context = AuthContext(
+                            user=user,
+                            role=user.role,
+                            department_id=user.department_id,
+                            request_id=request_id,
+                            token_jti=payload["jti"],
+                        )
+                    finally:
+                        db.close()
+                except HTTPException:
+                    raise
+                except Exception as exc:  # pragma: no cover - defensive path
+                    logger.exception("Failed to validate bearer token: %s", exc)
+                    raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="invalid authentication token")
 
         await self._apply_rate_limit(request)
         response = await call_next(request)

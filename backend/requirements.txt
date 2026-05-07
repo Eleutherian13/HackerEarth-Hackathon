@@ -12,3 +12,4 @@ redis
 celery
 python-multipart
 reportlab
+PyMuPDF

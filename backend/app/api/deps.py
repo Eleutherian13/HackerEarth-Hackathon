@@ -6,6 +6,7 @@ from uuid import UUID
 from fastapi import Depends, HTTPException, Request, status
 from sqlalchemy.orm import Session
 
+from app.core.config import settings
 from app.core.logging import set_request_context
 from app.core.security import (
     AuthContext,
@@ -16,6 +17,7 @@ from app.core.security import (
     request_context_from_request,
     user_has_department_access,
     validate_access_token,
+    get_or_create_bypass_user,
 )
 from app.core.validators import InputValidator, ValidationError
 from app.db.session import get_db
@@ -26,11 +28,18 @@ from app.models.enums import UserRole
 async def get_current_user(
     request: Request,
     db: Session = Depends(get_db),
-    token: str = Depends(oauth2_scheme),
+    token: str | None = Depends(oauth2_scheme),
 ) -> User:
+    # Check if auth bypass is enabled
+    if settings.AUTH_BYPASS:
+        return get_or_create_bypass_user(db)
+    
     context = getattr(request.state, "context", None)
     if isinstance(context, AuthContext) and context.user is not None:
         return context.user
+
+    if token is None:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="missing authentication token")
 
     payload = await validate_access_token(token)
     user = get_current_user_from_payload(db, payload)

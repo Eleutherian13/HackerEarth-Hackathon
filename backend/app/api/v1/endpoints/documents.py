@@ -13,6 +13,7 @@ from datetime import datetime, timezone
 import uuid
 import hashlib
 from pathlib import Path
+from threading import Thread
 
 from app.db.session import get_db
 from sqlalchemy.orm import Session
@@ -134,14 +135,36 @@ async def upload_document(
     
     # ─── TRIGGER PROCESSING ─────────────────────
     
-    try:
-        from app.services.ingestion.pdf_processor import process_pdf_sync
-        process_pdf_sync(str(doc_id), db)
-    except Exception as e:
-        # Processing failed but document is stored
-        document.processing_status = ProcessingStatus.FAILED
-        document.error_message = str(e)
-        db.commit()
+    def process_pdf_background(document_id: str):
+        """Process PDF in background thread to avoid blocking the response."""
+        try:
+            from app.services.ingestion.pdf_processor import process_pdf_sync
+            from app.db.session import SessionLocal
+            
+            bg_db = SessionLocal()
+            try:
+                process_pdf_sync(str(document_id), bg_db)
+                logger.info(f"Background PDF processing completed for document {document_id}")
+            finally:
+                bg_db.close()
+        except Exception as e:
+            logger.error(f"Background PDF processing failed for document {document_id}: {e}")
+            try:
+                # Try to update document status in database
+                from app.db.session import SessionLocal
+                bg_db = SessionLocal()
+                doc = bg_db.query(Document).filter(Document.id == document_id).first()
+                if doc:
+                    doc.processing_status = ProcessingStatus.FAILED
+                    doc.error_message = str(e)
+                    bg_db.commit()
+                bg_db.close()
+            except:
+                pass
+    
+    # Start PDF processing in background thread (non-blocking)
+    thread = Thread(target=process_pdf_background, args=(str(doc_id),), daemon=True)
+    thread.start()
     
     db.refresh(document)
     
@@ -273,10 +296,8 @@ async def get_document_status(
             {
                 "page_number": p.page_number,
                 "has_text": bool(p.raw_text or p.ocr_text),
-                "text_length": len(p.cleaned_text or p.raw_text or p.ocr_text or ""),
-                "extraction_quality": p.extraction_quality,
-                "needs_manual_review": p.needs_manual_review,
-                "ocr_status": p.ocr_status
+                "text_length": len(p.raw_text or p.ocr_text or ""),
+                "extraction_confidence": p.extraction_confidence
             }
             for p in pages
         ] if pages else []

@@ -21,7 +21,7 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 # OAuth2 scheme - this MUST match the login endpoint path
 oauth2_scheme = OAuth2PasswordBearer(
     tokenUrl="/api/v1/auth/login",
-    auto_error=True
+    auto_error=False  # Allow bypass when AUTH_BYPASS is enabled
 )
 
 # ─── SCHEMAS ───────────────────────────────────────
@@ -79,7 +79,20 @@ async def get_current_user(
     token: str = Depends(oauth2_scheme),
     db: Session = Depends(get_db)
 ) -> User:
-    """Dependency: Get current user from JWT token"""
+    """Dependency: Get current user from JWT token or bypass user if AUTH_BYPASS enabled"""
+    
+    # Check if auth bypass is enabled
+    if settings.AUTH_BYPASS:
+        from app.core.security import get_or_create_bypass_user
+        return get_or_create_bypass_user(db)
+    
+    if not token:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Could not validate credentials",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",

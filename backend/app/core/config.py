@@ -72,6 +72,11 @@ class Settings(BaseSettings):
 	LOG_FILE_PATH: Path | None = None
 	SENTRY_DSN: str | None = None
 	TESTING: bool = False
+	
+	# Auth Bypass - Set to True to disable authentication and use default user
+	AUTH_BYPASS: bool = False
+	AUTH_BYPASS_USER_ID: str = "00000000-0000-0000-0000-000000000001"
+	AUTH_BYPASS_USER_EMAIL: str = "bypass@system.local"
 
 	# Email Configuration
 	ADMIN_EMAIL: str = "admin@example.com"

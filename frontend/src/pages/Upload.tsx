@@ -31,8 +31,15 @@ const UploadPage = () => {
       setDone(doc.id);
       setTimeout(() => navigate(`/verification/${doc.id}`), 800);
     } catch (e) {
+      if (e instanceof ApiError && e.status === 401) {
+        setError("Authentication required. Please sign in and try again.");
+        setTimeout(() => navigate("/login"), 600);
+        return;
+      }
       setError(
-        e instanceof ApiError ? `${e.message} (${e.status || "network"})` : String(e)
+        e instanceof ApiError
+          ? `${e.message} (${e.status || "network"})`
+          : String(e),
       );
     } finally {
       setUploading(false);
@@ -58,7 +65,10 @@ const UploadPage = () => {
             className="paper flex cursor-pointer flex-col items-center justify-center rounded-sm border-2 border-dashed border-border p-12 text-center transition-colors hover:border-primary/40 hover:bg-secondary/30"
           >
             <div className="flex h-14 w-14 items-center justify-center rounded-sm bg-gradient-judicial shadow-paper">
-              <UploadIcon className="h-6 w-6 text-primary-foreground" strokeWidth={1.5} />
+              <UploadIcon
+                className="h-6 w-6 text-primary-foreground"
+                strokeWidth={1.5}
+              />
             </div>
             <div className="mt-4 font-display text-xl font-600 text-ink">
               Drop a PDF, or click to browse
@@ -103,7 +113,8 @@ const UploadPage = () => {
 
               {done && (
                 <div className="mt-4 flex items-center gap-2 text-sm text-success">
-                  <CheckCircle2 className="h-4 w-4" /> Uploaded · routing to verification…
+                  <CheckCircle2 className="h-4 w-4" /> Uploaded · routing to
+                  verification…
                 </div>
               )}
 
@@ -114,7 +125,9 @@ const UploadPage = () => {
                   className="inline-flex items-center gap-2 rounded-sm bg-primary px-4 py-2 text-sm font-500 text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
                 >
                   <UploadIcon className="h-4 w-4" />
-                  {uploading ? `Uploading… ${progress.toFixed(0)}%` : "Submit for ingestion"}
+                  {uploading
+                    ? `Uploading… ${progress.toFixed(0)}%`
+                    : "Submit for ingestion"}
                 </button>
               </div>
             </div>

@@ -22,7 +22,7 @@ from app.models.domain.models import Department, Document, RefreshToken, User
 from app.models.enums import ProcessingStatus, UserRole
 
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login", auto_error=False)
 
 pwd_context = CryptContext(
     schemes=["bcrypt"],
@@ -334,4 +334,44 @@ def build_security_headers() -> dict[str, str]:
 
 def get_cors_allowed_origins() -> list[str]:
     return list(settings.CORS_ALLOWED_ORIGINS)
+
+
+def get_or_create_bypass_user(db: Session) -> User:
+    """Get or create a bypass user for when AUTH_BYPASS is enabled."""
+    from uuid import UUID
+    
+    bypass_user_id = UUID(settings.AUTH_BYPASS_USER_ID)
+    user = db.get(User, bypass_user_id)
+    
+    if user is None:
+        # Get or create the default department
+        default_dept = db.query(Department).filter(
+            Department.code == "DEFAULT"
+        ).first()
+        
+        if default_dept is None:
+            # Create default department if it doesn't exist
+            default_dept = Department(
+                id=UUID("00000000-0000-0000-0000-000000000000"),
+                name="System Department",
+                code="DEFAULT",
+                is_active=True,
+            )
+            db.add(default_dept)
+            db.flush()
+        
+        user = User(
+            id=bypass_user_id,
+            email=settings.AUTH_BYPASS_USER_EMAIL,
+            full_name="System Bypass User",
+            hashed_password="!",  # No password
+            is_active=True,
+            role=UserRole.SUPERADMIN,
+            department_id=default_dept.id,
+        )
+        db.add(user)
+        db.commit()
+        db.refresh(user)
+    
+    return user
 

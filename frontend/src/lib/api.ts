@@ -52,6 +52,8 @@ const normalizePath = (path: string) => {
   return path;
 };
 
+const apiUrl = (path: string) => `${API_BASE_URL}${normalizePath(path)}`;
+
 const buildQuery = (params?: Record<string, string | number | undefined>) => {
   const search = new URLSearchParams();
   Object.entries(params ?? {}).forEach(([key, value]) => {
@@ -73,7 +75,7 @@ export async function request<T>(
   const token = tokenStore.access;
   if (token) headers.set("Authorization", `Bearer ${token}`);
 
-  const res = await fetch(`${API_BASE_URL}${normalizePath(path)}`, { ...init, headers });
+  const res = await fetch(apiUrl(path), { ...init, headers });
 
   if (res.status === 401 && retry && tokenStore.refresh) {
     const refreshed = await tryRefresh();
@@ -87,7 +89,8 @@ export async function request<T>(
     } catch {
       /* ignore */
     }
-    const message = (body as { detail?: string } | undefined)?.detail ?? `HTTP ${res.status}`;
+    const message =
+      (body as { detail?: string } | undefined)?.detail ?? `HTTP ${res.status}`;
     throw new ApiError(res.status, message, body);
   }
 
@@ -99,7 +102,7 @@ export async function request<T>(
 
 async function tryRefresh(): Promise<boolean> {
   try {
-    const res = await fetch(`${API_BASE_URL}/auth/refresh`, {
+    const res = await fetch(apiUrl("/auth/refresh"), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ refresh_token: tokenStore.refresh }),
@@ -119,7 +122,7 @@ export const authApi = {
     const form = new URLSearchParams();
     form.set("username", username);
     form.set("password", password);
-    const res = await fetch(`${API_BASE_URL}/auth/login`, {
+    const res = await fetch(apiUrl("/auth/login"), {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: form.toString(),
@@ -147,14 +150,21 @@ export const authApi = {
     tokenStore.clear();
   },
   me: () => request<UserResponse>("/auth/me"),
-  refresh: () => request<{ access_token: string; token_type: string }>("/auth/refresh", { method: "POST" }),
+  refresh: () =>
+    request<{ access_token: string; token_type: string }>("/auth/refresh", {
+      method: "POST",
+    }),
 };
 
 // ─── Documents ───────────────────────────────────────────────────────────
 export const documentsApi = {
   list: (params?: Record<string, string | number | undefined>) =>
     request<DocumentListResponse>(`/documents/${buildQuery(params)}`),
-  upload: (file: File, onProgress?: (pct: number) => void, metadata?: Record<string, unknown>) =>
+  upload: (
+    file: File,
+    onProgress?: (pct: number) => void,
+    metadata?: Record<string, unknown>,
+  ) =>
     new Promise<DocumentResponse>((resolve, reject) => {
       const xhr = new XMLHttpRequest();
       const formData = new FormData();
@@ -163,7 +173,7 @@ export const documentsApi = {
         formData.append("metadata", JSON.stringify(metadata));
       }
 
-      xhr.open("POST", `${API_BASE_URL}/documents/upload`);
+      xhr.open("POST", apiUrl("/documents/upload"));
       const token = tokenStore.access;
       if (token) xhr.setRequestHeader("Authorization", `Bearer ${token}`);
       xhr.upload.onprogress = (event) => {
@@ -174,7 +184,62 @@ export const documentsApi = {
       xhr.onload = () => {
         if (xhr.status >= 200 && xhr.status < 300) {
           try {
-            resolve(JSON.parse(xhr.responseText) as DocumentResponse);
+            const payload = JSON.parse(xhr.responseText) as Record<
+              string,
+              unknown
+            >;
+
+            // Upload endpoint can return either a full document payload (`id`) or
+            // an upload payload (`document_id`). Normalize for frontend consumers.
+            const normalized: DocumentResponse = {
+              id: String(payload.id ?? payload.document_id ?? ""),
+              filename: String(
+                payload.filename ?? payload.original_filename ?? "",
+              ),
+              status: String(payload.status ?? "uploaded"),
+              page_count:
+                typeof payload.page_count === "number"
+                  ? payload.page_count
+                  : null,
+              file_size_bytes:
+                typeof payload.file_size_bytes === "number"
+                  ? payload.file_size_bytes
+                  : typeof payload.file_size_mb === "number"
+                    ? Math.round(payload.file_size_mb * 1024 * 1024)
+                    : null,
+              is_text_based:
+                typeof payload.is_text_based === "boolean"
+                  ? payload.is_text_based
+                  : null,
+              error_message:
+                typeof payload.error_message === "string"
+                  ? payload.error_message
+                  : null,
+              metadata:
+                payload.metadata && typeof payload.metadata === "object"
+                  ? (payload.metadata as Record<string, unknown>)
+                  : null,
+              created_at:
+                typeof payload.created_at === "string"
+                  ? payload.created_at
+                  : null,
+              updated_at:
+                typeof payload.updated_at === "string"
+                  ? payload.updated_at
+                  : null,
+            };
+
+            if (!normalized.id) {
+              reject(
+                new ApiError(
+                  xhr.status,
+                  "Upload succeeded but response is missing document id",
+                ),
+              );
+              return;
+            }
+
+            resolve(normalized);
           } catch {
             reject(new ApiError(xhr.status, "Invalid response"));
           }
@@ -186,16 +251,29 @@ export const documentsApi = {
       xhr.send(formData);
     }),
   get: (id: string) => request<DocumentResponse>(`/documents/${id}`),
-  status: (id: string) => request<DocumentStatusResponse>(`/documents/${id}/status`),
-  fields: (id: string) => request<{ document_id: string; total_fields: number; fields: ExtractedFieldResponse[] }>(`/review/documents/${id}/fields`),
+  status: (id: string) =>
+    request<DocumentStatusResponse>(`/documents/${id}/status`),
+  fields: (id: string) =>
+    request<{
+      document_id: string;
+      total_fields: number;
+      fields: ExtractedFieldResponse[];
+    }>(`/review/documents/${id}/fields`),
   reviewField: (fieldId: string, payload: FieldReviewRequest) =>
-    request<{ status: string; field: ExtractedFieldResponse }>(`/review/fields/${fieldId}/verify`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    }),
+    request<{ status: string; field: ExtractedFieldResponse }>(
+      `/review/fields/${fieldId}/verify`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      },
+    ),
   generateActionPlan: (id: string) =>
-    request<{ document_id: string; generated_count: number; action_items: Array<Record<string, unknown>> }>(`/review/documents/${id}/generate-action-plan`, {
+    request<{
+      document_id: string;
+      generated_count: number;
+      action_items: Array<Record<string, unknown>>;
+    }>(`/review/documents/${id}/generate-action-plan`, {
       method: "POST",
     }),
 };
@@ -203,26 +281,49 @@ export const documentsApi = {
 // ─── Action plan ─────────────────────────────────────────────────────────
 export const actionPlanApi = {
   generate: (documentId: string) => documentsApi.generateActionPlan(documentId),
-  complete: (actionItemId: string) => request<Record<string, unknown>>(`/dashboard/actions/${actionItemId}/complete`, { method: "POST" }),
+  complete: (actionItemId: string) =>
+    request<Record<string, unknown>>(
+      `/dashboard/actions/${actionItemId}/complete`,
+      { method: "POST" },
+    ),
 };
 
 // ─── Dashboard ───────────────────────────────────────────────────────────
 export const dashboardApi = {
   summary: () => request<DashboardStatsResponse>("/dashboard/summary"),
   actions: (params?: Record<string, string | number | undefined>) =>
-    request<{ items: Array<Record<string, unknown>>; total: number; page: number; per_page: number; pages: number }>(`/dashboard/actions${buildQuery(params)}`),
-  departments: () => request<Array<Record<string, unknown>>>("/dashboard/departments"),
-  urgent: (limit = 20) => request<Array<Record<string, unknown>>>(`/dashboard/urgent?limit=${limit}`),
-  search: (query: string) => request<Array<Record<string, unknown>>>(`/dashboard/search?search_query=${encodeURIComponent(query)}`),
+    request<{
+      items: Array<Record<string, unknown>>;
+      total: number;
+      page: number;
+      per_page: number;
+      pages: number;
+    }>(`/dashboard/actions${buildQuery(params)}`),
+  departments: () =>
+    request<Array<Record<string, unknown>>>("/dashboard/departments"),
+  urgent: (limit = 20) =>
+    request<Array<Record<string, unknown>>>(`/dashboard/urgent?limit=${limit}`),
+  search: (query: string) =>
+    request<Array<Record<string, unknown>>>(
+      `/dashboard/search?search_query=${encodeURIComponent(query)}`,
+    ),
   exportCsv: () => request<Blob>("/dashboard/export/csv"),
   exportPdfReport: () => request<Blob>("/dashboard/export/pdf-report"),
-  completeAction: (actionItemId: string) => actionPlanApi.complete(actionItemId),
+  completeAction: (actionItemId: string) =>
+    actionPlanApi.complete(actionItemId),
 };
 
 // ─── Admin ───────────────────────────────────────────────────────────────
 export const adminApi = {
   auditLogs: (params?: Record<string, string | number | undefined>) =>
-    request<{ items: AuditLogEntry[]; total: number; page: number; per_page: number; pages: number }>(`/admin/audit-logs${buildQuery(params)}`),
+    request<{
+      items: AuditLogEntry[];
+      total: number;
+      page: number;
+      per_page: number;
+      pages: number;
+    }>(`/admin/audit-logs${buildQuery(params)}`),
   users: () => request<Array<Record<string, unknown>>>("/admin/users"),
-  departments: () => request<Array<Record<string, unknown>>>("/admin/departments"),
+  departments: () =>
+    request<Array<Record<string, unknown>>>("/admin/departments"),
 };

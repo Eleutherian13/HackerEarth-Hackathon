@@ -3,7 +3,16 @@ PDF Processor - Synchronous PDF text extraction
 Uses PyMuPDF for text extraction, Tesseract for OCR fallback
 """
 
-import fitz  # PyMuPDF
+try:
+    import pymupdf
+    fitz_open = pymupdf.open
+except (ImportError, AttributeError):
+    try:
+        import fitz
+        fitz_open = fitz.open
+    except ImportError:
+        fitz_open = None
+
 from pathlib import Path
 from datetime import datetime, timezone
 import os
@@ -44,9 +53,13 @@ def process_pdf_sync(document_id: str, db=None):
         
         logger.info(f"Processing PDF: {storage_path}")
         
+        # Check if fitz is available
+        if fitz_open is None:
+            raise RuntimeError("PyMuPDF is not installed. Please install it using: pip install PyMuPDF")
+        
         # Open PDF with PyMuPDF
         try:
-            pdf_doc = fitz.open(str(storage_path))
+            pdf_doc = fitz_open(str(storage_path))
         except Exception as e:
             raise ValueError(f"Failed to open PDF: {str(e)}")
         
@@ -101,12 +114,9 @@ def process_pdf_sync(document_id: str, db=None):
                 document_id=doc.id,
                 page_number=page_num + 1,
                 raw_text=text,
-                cleaned_text=cleaned if cleaned else (ocr_text if ocr_text else text),
                 ocr_text=ocr_text,
                 page_image_path=relative_image_path,
-                ocr_status="SUCCESS" if (has_text or ocr_text) else "PENDING",
-                extraction_quality=extraction_quality,
-                needs_manual_review=needs_review
+                extraction_confidence=0.9 if has_text else 0.5
             )
             db.add(doc_page)
         
@@ -122,6 +132,19 @@ def process_pdf_sync(document_id: str, db=None):
         
         logger.info(f"Document {document_id} processed: {total_pages} pages, "
                    f"{text_pages} text pages, text-based: {doc.is_text_based}")
+        
+        # Trigger LLM extraction
+        logger.info(f"Triggering LLM extraction for document {document_id}...")
+        try:
+            from app.services.extraction.extractor import ExtractionOrchestrator
+            orchestrator = ExtractionOrchestrator()
+            extraction_result = orchestrator.extract_from_document(str(document_id), db)
+            logger.info(f"LLM extraction complete: {extraction_result}")
+        except Exception as e:
+            logger.error(f"LLM extraction failed: {str(e)}")
+            doc.processing_status = ProcessingStatus.FAILED
+            doc.error_message = f"PDF processed but LLM extraction failed: {str(e)}"
+            db.commit()
         
         return {
             "status": "success",
