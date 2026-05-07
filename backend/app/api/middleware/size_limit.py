@@ -126,6 +126,11 @@ class ContentTypeValidationMiddleware(BaseHTTPMiddleware):
         "/api/v1/documents/upload",
     }
 
+    # POST endpoints that intentionally do not send a body
+    NO_BODY_PATHS = {
+        "/api/v1/review/documents/",
+    }
+
     # Paths that accept form data (form-urlencoded or multipart)
     FORM_DATA_PATHS = {
         "/api/v1/auth/login",
@@ -206,6 +211,10 @@ class ContentTypeValidationMiddleware(BaseHTTPMiddleware):
             if path.startswith(json_path):
                 # Exception for upload endpoint (handled above)
                 if any(path.startswith(mp) for mp in self.MULTIPART_PATHS):
+                    continue
+
+                # Exception for body-less action endpoints
+                if any(path.startswith(no_body_path) for no_body_path in self.NO_BODY_PATHS):
                     continue
                 
                 # Exception for form-data endpoints (handled above)

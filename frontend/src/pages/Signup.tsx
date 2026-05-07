@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Scale } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
-import { lovable } from "@/integrations/lovable";
+import { authApi } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -15,32 +14,26 @@ export default function Signup() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
-      if (data.session) navigate("/", { replace: true });
-    });
+    authApi.me().then(() => navigate("/", { replace: true })).catch(() => {});
   }, [navigate]);
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     if (password.length < 8) return toast.error("Password must be at least 8 characters");
     setLoading(true);
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: { emailRedirectTo: `${window.location.origin}/` },
-    });
-    setLoading(false);
-    if (error) return toast.error(error.message);
-    toast.success("Check your email to verify your account");
+    try {
+      // backend requires full_name; use local part of email if none provided
+      const full_name = email.split("@")[0];
+      await authApi.register({ email, full_name, password });
+      toast.success("Account created; you can sign in now");
+      navigate("/login", { replace: true });
+    } catch (err: any) {
+      toast.error(err?.message ?? "Sign-up failed");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleOAuth = async (provider: "google" | "apple" | "microsoft") => {
-    const result = await lovable.auth.signInWithOAuth(provider, {
-      redirect_uri: window.location.origin,
-    });
-    if (result.error) toast.error(result.error.message ?? "Sign-up failed");
-    else if (!result.redirected) navigate("/", { replace: true });
-  };
 
   return (
     <div className="min-h-screen bg-gradient-parchment flex items-center justify-center px-6 py-12">

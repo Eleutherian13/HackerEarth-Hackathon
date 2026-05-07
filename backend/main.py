@@ -26,6 +26,8 @@ from app.api.v1.endpoints.action_plan import router as action_plan_router
 from app.api.v1.endpoints.cases import router as cases_router
 from app.api.v1.endpoints.dashboard import router as dashboard_router
 from app.api.v1.endpoints.documents import router as documents_router
+from app.api.v1.endpoints.documents_extraction import router as extraction_router
+from app.api.v1.endpoints.review_api import router as review_router
 from app.api.v1.endpoints.admin import router as admin_router
 from app.core.config import settings
 from app.core.logging import get_logger, configure_logging
@@ -122,6 +124,8 @@ def create_app() -> FastAPI:
     app.include_router(health.router)
     app.include_router(auth.router, prefix="/api/v1")
     app.include_router(documents_router, prefix="/api/v1")
+    app.include_router(extraction_router, prefix="/api/v1")
+    app.include_router(review_router, prefix="/api/v1")
     app.include_router(action_plan_router, prefix="/api/v1")
     app.include_router(cases_router, prefix="/api/v1")
     app.include_router(dashboard_router, prefix="/api/v1")

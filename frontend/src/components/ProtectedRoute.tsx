@@ -11,7 +11,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const token = localStorage.getItem("auth_token");
+    const token = localStorage.getItem("laos_access_token");
     if (!token) {
       navigate("/login", { replace: true });
     } else {
@@ -21,11 +21,8 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
 
     // Listen for unauthorized events
     const handleUnauthorized = () => {
-      localStorage.removeItem("auth_token");
-      localStorage.removeItem("refresh_token");
-      localStorage.removeItem("user_email");
-      localStorage.removeItem("user_id");
-      localStorage.removeItem("user_role");
+      localStorage.removeItem("laos_access_token");
+      localStorage.removeItem("laos_refresh_token");
       navigate("/login", { replace: true });
     };
 

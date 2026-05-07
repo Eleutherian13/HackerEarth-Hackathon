@@ -1,7 +1,7 @@
 import { Scale, Search, Bell, LogOut, LogIn } from "lucide-react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { authApi } from "@/lib/api";
 
 const links = [
   { to: "/", label: "Dashboard" },
@@ -18,15 +18,19 @@ export const Header = () => {
   const [email, setEmail] = useState<string | null>(null);
 
   useEffect(() => {
-    const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
-      setEmail(session?.user?.email ?? null);
-    });
-    supabase.auth.getSession().then(({ data }) => setEmail(data.session?.user?.email ?? null));
-    return () => sub.subscription.unsubscribe();
+    let mounted = true;
+    authApi.me()
+      .then((u) => {
+        if (mounted && u?.email) setEmail((u as any).email ?? null);
+      })
+      .catch(() => {});
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   const handleSignOut = async () => {
-    await supabase.auth.signOut();
+    await authApi.logout();
     navigate("/login");
   };
 

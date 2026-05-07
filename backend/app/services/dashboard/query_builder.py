@@ -5,7 +5,7 @@ from typing import Any
 from uuid import UUID
 
 from fastapi import HTTPException
-from sqlalchemy import case, desc, func
+from sqlalchemy import Date, case, desc, func
 from sqlalchemy.orm import Session
 
 from app.core.security import UserRole, user_has_department_access
@@ -222,7 +222,7 @@ def get_dashboard_summary(db: Session, current_user, filters: DashboardQueryPara
     four_weeks_ago = date.today() - timedelta(weeks=4)
     weekly_rows = (
         db.query(
-            func.date_trunc("week", ActionPlanItem.verification_date).cast(date).label("week_start"),
+            func.date_trunc("week", ActionPlanItem.verification_date).cast(Date).label("week_start"),
             func.count(ActionPlanItem.id).label("verified_count"),
             func.sum(
                 case(

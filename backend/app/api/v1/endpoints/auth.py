@@ -56,6 +56,7 @@ def create_access_token(data: dict) -> str:
         minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES
     )
     to_encode.update({
+        "token_type": "access",
         "exp": expire,
         "iat": datetime.now(timezone.utc),
         "jti": str(uuid.uuid4())
