@@ -54,16 +54,32 @@ class DetailedHealthStatus(HealthStatus):
 
 
 async def check_database(db: Session) -> tuple[str, float | None, str | None]:
-    """Check database connectivity."""
+    """Check database connectivity with timeout."""
     try:
-        start = datetime.now(timezone.utc)
-        result = db.execute(text("SELECT 1"))
-        result.fetchone()
-        duration_ms = (datetime.now(timezone.utc) - start).total_seconds() * 1000
-        return "ok", duration_ms, None
+        import asyncio
+        
+        # Run the synchronous database check with a 5-second timeout
+        def _check():
+            start = datetime.now(timezone.utc)
+            try:
+                result = db.execute(text("SELECT 1"))
+                result.fetchone()
+                duration_ms = (datetime.now(timezone.utc) - start).total_seconds() * 1000
+                return "ok", duration_ms, None
+            except Exception as e:
+                return "error", None, f"Connection failed: {str(e)[:50]}"
+        
+        try:
+            status, duration, msg = await asyncio.wait_for(
+                asyncio.to_thread(_check),
+                timeout=3.0
+            )
+            return status, duration, msg
+        except asyncio.TimeoutError:
+            return "error", None, "Database check timed out"
     except Exception as e:
         logger.error_context("Database health check failed", exc_info=True)
-        return "error", None, str(e)
+        return "error", None, f"Health check error: {str(e)[:50]}"
 
 
 async def check_redis() -> tuple[str, float | None, str | None]:

@@ -48,6 +48,13 @@ class Settings(BaseSettings):
 	S3_ENDPOINT_URL: str | None = None
 	MAX_UPLOAD_SIZE_MB: int = 50
 
+	# Ollama LLM Configuration
+	OLLAMA_BASE_URL: str = "http://localhost:11434"
+	OLLAMA_MODEL: str = "mistral:latest"
+	OLLAMA_TIMEOUT: int = 120
+	OLLAMA_TEMPERATURE: float = 0.0
+	OLLAMA_MAX_TOKENS: int = 4096
+
 	OCR_LANGUAGE: str = "eng+hin"
 	OCR_ENGINE: Literal["tesseract", "paddleocr"] = "paddleocr"
 	EXTRACTION_MODEL: str = "gpt-4o-mini"
